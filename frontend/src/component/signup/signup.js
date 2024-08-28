@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import './signup.css'; // Import the CSS file for styling
 import axios from 'axios';
-// Import Material-UI components and icons
 import { Button } from '@mui/material';
 import { Google, Brightness4, Brightness7 } from '@mui/icons-material';
 import logo from './logo.svg';
 import signupVisual from './doctor.png'; // Adjust your image path accordingly
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css'; // Import the default styles
 
 const SignupPage = () => {
   const { login } = useAuth();
@@ -15,19 +16,26 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(''); // State for role selection
+  const [phone, setPhone] = useState('');
+  const [pincode, setPincode] = useState(''); // State for pincode
+  const [specialty, setSpecialty] = useState(''); // State for specialty
   const [darkMode, setDarkMode] = useState(false);
   const navigation = useNavigate();
 
   const onSignup = async (e) => {
-e.preventDefault();
+    e.preventDefault();
+    const phoneNumber=phone;
     try {
       const { data } = await axios.post('http://localhost:5000/api/v1/register', {
         name,
         email,
         password,
         role,
+        phoneNumber,
+        pincode, // Include pincode in the request
+        specialty: role === 'doctor' ? specialty : undefined, // Include specialty if role is doctor
       });
-      console.log("data is here",data);
+      console.log("data is here", data);
       if (data.success) {
         login(email, password);
         navigation('/');
@@ -35,7 +43,6 @@ e.preventDefault();
         console.log(data);
       }
     } catch (error) {
-      
       alert(error.response.data.message);
       // Handle signup error (e.g., show an error message)
     }
@@ -90,6 +97,24 @@ e.preventDefault();
               value={password}
             />
 
+            {/* Phone Number Input */}
+            <PhoneInput
+              placeholder="Enter phone number"
+              value={phone}
+              onChange={setPhone}
+              className="phone-input" // Apply same styling as other input fields
+              defaultCountry="IN"
+            />
+
+            {/* Pincode Input */}
+            <input
+              type="text"
+              onChange={(e) => setPincode(e.target.value)}
+              placeholder="Pincode"
+              className="input-field"
+              value={pincode}
+            />
+
             {/* Role Selection */}
             <div className="role-selection">
               <label>Select your role:</label>
@@ -98,11 +123,29 @@ e.preventDefault();
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
               >
-                
+                <option value="">Select Role</option>
                 <option value="patient">Patient</option>
                 <option value="doctor">Doctor</option>
               </select>
             </div>
+
+            {/* Specialty Selection for Doctors */}
+            {role === 'doctor' && (
+              <div className="specialty-selection">
+                <label>Select your specialty:</label>
+                <select
+                  className="input-field"
+                  value={specialty}
+                  onChange={(e) => setSpecialty(e.target.value)}
+                >
+                  <option value="">Select Specialty</option>
+                  <option value="cardiologist">Cardiologist</option>
+                  <option value="neurologist">Neurologist</option>
+                  <option value="orthopedic">Orthopedic</option>
+                  {/* Add more specialties as needed */}
+                </select>
+              </div>
+            )}
 
             <div className="remember-me">
               <input type="checkbox" id="remember" />
@@ -114,7 +157,7 @@ e.preventDefault();
           </form>
           <p className="login-link">
             Already have an account? <a href="/login">Login now</a>
-           </p>
+          </p>
         </div>
       </div>
 

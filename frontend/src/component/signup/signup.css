@@ -10,31 +10,45 @@
     background-color: #f0f2f5;
   }
   
-  .login-page-container {
-    display: flex;
-    height: 100vh;
-    width: 100%;
-    background-color: #e0e6ed;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
+  /* Ensure the form container is centered and fully visible */
+/* Ensure the form container does not get cut off */
+.form-container {
+  max-width: 450px;
+  width: 100%;
+  min-height: 600px; /* Increase the minimum height to ensure it's tall enough */
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 0 auto; /* Center the container horizontally */
+  overflow: hidden; /* Hide overflow to prevent any content from spilling out */
+  box-sizing: border-box; /* Ensure padding and border are included in the width */
+}
+
+/* Ensure the container adapts to screen size */
+.login-page-container {
+  display: flex;
+  height: 130vh; /* Full viewport height */
+  width: 100%;
+  background-color: #e0e6ed;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: auto; /* Allow scrolling if content overflows */
+}
+
+/* Ensure content in form container is flexible and does not overflow */
+.form-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%; /* Ensure form content uses full width of container */
+}
+
+
+
   
-  .form-container {
-    flex: 1;
-    max-width: 450px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 40px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .form-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
   
   .logo img {
     max-width: 120px;
@@ -278,5 +292,60 @@
     border-radius: 5px;
     border: 1px solid #ccc;
   }
+  /* Style for phone input to match other input fields */
+
+
+/* Hover and focus effects */
+.phone-input:hover {
+  border-color: blue; /* Change the border color on hover */
+}
+
+.phone-input:focus {
+  border-color: blue; /* Change the border color when focused */
+  outline: none; /* Remove the default outline */
+}
+/* General styling for all input fields */
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+/* Specific styling for the phone input to match other inputs */
+.phone-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+/* Hover and focus effects for all input fields */
+.input-field:hover {
+  border-color: blue; /* Change the border color on hover */
+}
+
+.input-field:focus {
+  border-color: blue; /* Change the border color when focused */
+  outline: none; /* Remove the default outline */
+}
+
+/* Specialty selection styling */
+.specialty-selection {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.specialty-selection label {
+  display: block;
+  margin-bottom: 5px;
+}
+
   
     
