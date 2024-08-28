@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
+// index.js or App.js
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Header from './component/layout/header/header';
-import Footer from './component/layout/footer/footer';
+import Footer from './component/layout/footer/footer.js';
 import Home from './component/home/home';
 import Login from './component/login/login';
 import { AuthProvider } from './component/auth/AuthContext.js';
@@ -11,19 +14,15 @@ import PrivateRoute from './privateroutes/privateroute.js';
 import Signup from './component/signup/signup.js';
 import Forgot from './component/login/forgot.js'
 function App() {
-    const [searchQuery, setSearchQuery] = useState('');
-
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-    };
+   
 
     return (
         <AuthProvider>
             <Router>
                 <div className="App">
-                    <Header onSearch={handleSearch} />
+                    <Header  />
                     <Routes>
-                        <Route path='/' element={<Home searchQuery={searchQuery} />} />
+                        <Route path='/' element={<Home  />} />
                         <Route path='/login' element={<Login />} />
                         <Route path='/doctor/dashboard/:id' element={<PrivateRoute element={Doc_Dashboard} />} />
                         

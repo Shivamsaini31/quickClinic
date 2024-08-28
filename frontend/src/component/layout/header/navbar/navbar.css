@@ -1,0 +1,134 @@
+/* Sidebar.css */
+
+/* Button to open the sidebar */
+.menu-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1050;
+  background-color: #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.menu-button:hover {
+  transform: scale(1.1);
+  background-color: #0056b3;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  background: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+}
+
+.sidebar .offcanvas-header {
+  background-color: #007bff;
+  color: white;
+  border-bottom: 1px solid #0056b3;
+}
+
+.sidebar .offcanvas-body {
+  background-color: #f8f9fa;
+  color: #343a40;
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+/* List group item styles */
+.list-item {
+  background-color: transparent;
+  color: #343a40;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+
+.list-item:hover {
+  background-color: #e9ecef;
+  transform: translateX(5px);
+}
+
+/* Login/Logout button styles */
+.auth-button {
+  width: 100%;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #28a745;
+  border: none;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.auth-button:hover {
+  background-color: #218838;
+  transform: translateY(-5px);
+}
+
+.auth-button.danger {
+  background-color: #dc3545;
+}
+
+.auth-button.danger:hover {
+  background-color: #c82333;
+}
+
+/* Offcanvas title styles */
+.offcanvas-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Close button styles */
+.offcanvas-header .btn-close {
+  color: white;
+  filter: brightness(80%);
+}
+
+.offcanvas-header .btn-close:hover {
+  filter: brightness(100%);
+}
+
+/* Backdrop for offcanvas */
+.offcanvas-backdrop.show {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Sidebar shadow for depth */
+.sidebar .offcanvas {
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .menu-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sidebar .offcanvas-body {
+    padding: 15px;
+  }
+
+  .list-item {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+
+  .auth-button {
+    padding: 10px;
+  }
+}

@@ -1,73 +1,72 @@
-footer {
-    margin-top: 10vmax;
-    padding: 2vmax;
-    background-color: rgb(34, 33, 33);
-    color: white;
-    display: flex;
-    align-items: center;
-  }
-  
-  .leftFooter {
-    width: 20%;
-    display: flex;
-  
-    flex-direction: column;
-    align-items: center;
-  }
-  .leftFooter > h4 {
-    font-family: "Roboto";
-    font-size: 1vmax;
-  }
-  .leftFooter > p {
-    text-align: center;
-    font-size: 1.2vmax;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-  }
-  .leftFooter > img {
-    width: 10vmax;
-    margin: 1vmax;
-    cursor: pointer;
-  }
-  
-  .midFooter {
-    width: 60%;
-  
-    text-align: center;
-  }
-  
-  .midFooter > h1 {
-    font-size: 4vmax;
-    font-family: "Roboto";
-    color: #eb4034;
-  }
-  .midFooter > p {
-    max-width: 60%;
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-    margin: 1vmax auto;
-  }
-  
-  .rightFooter {
-    width: 20%;
-  
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .rightFooter > h4 {
-    font-family: "Roboto";
-    font-size: 1.4vmax;
-    text-decoration: underline;
-  }
-  .rightFooter > a {
-    text-decoration: none;
-    font-size: 1.3vmax;
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-    color: white;
-    transition: all 0.5s;
-    margin: 0.5vmax;
-  }
-  
-  .rightFooter > a:hover {
-    color: #eb4034;
-  }
+/* Footer container style */
+.footer-container {
+  background-color: #343a40;
+  color: #ffffff;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.3);
+  margin-top: auto; /* Ensures footer sticks to the bottom */
+}
+
+/* Footer section style */
+.footer-section {
+  flex: 1;
+  padding: 10px;
+}
+
+/* Typography styles */
+.footer-section h6 {
+  margin-bottom: 10px;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* List styles for services */
+.footer-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.footer-section li {
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+}
+
+/* Social Icons container style */
+.social-icons {
+  display: flex;
+  justify-content: center; /* Center-aligns the icons */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Animated icon button style */
+.animated-icon-button {
+  font-size: 24px;
+  transition: transform 0.3s, color 0.3s;
+}
+
+.animated-icon-button:hover {
+  transform: scale(1.2);
+}
+
+/* Icon color styles */
+.icon-facebook {
+  color: #4267B2;
+}
+
+.icon-instagram {
+  color: #C13584;
+}
+
+.icon-linkedin {
+  color: #0077b5;
+}
+
+/* Follow Us heading alignment */
+.follow-us {
+  text-align: center; /* Center-aligns the heading */
+  margin-bottom: 10px; /* Add space below the heading */
+}

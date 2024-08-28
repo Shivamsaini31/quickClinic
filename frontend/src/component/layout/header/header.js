@@ -1,12 +1,12 @@
 import React from 'react';
-import Navbar from './navbar';
-import SearchBar from './searchbar'; 
+import NavBar from './navbar/navbar';
 
-const Header = ({ onSearch }) => {
+
+const Header = () => {
     return (
         <header>
-            <Navbar />
-            <SearchBar onSearch={onSearch} />
+          <NavBar/>
+            
         </header>
     );
 };

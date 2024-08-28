@@ -36,3 +36,20 @@
     transform: rotate(360deg);
   }
 }
+/* Apply flexbox to the main container */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the container takes the full viewport height */
+}
+
+/* Ensure content area takes up remaining space */
+.content {
+  flex: 1; /* Fills the remaining space between header and footer */
+}
+
+/* Style the footer to be at the bottom */
+footer {
+  margin-top: auto; /* Push footer to the bottom */
+}
+

@@ -1,54 +1,22 @@
-import React, { Fragment } from 'react';
-import { CgMouse } from 'react-icons/cg';
+import React from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import './home.css';
-import ProductCard from './product';
-import MetaData from '../layout/metadata';
 
-const products = [
-    {
-        name: "black-tshirt",
-        images: [{ url: "https://i.ibb.co/DRST11n/1.webp" }],
-        price: "3006",
-        _id: "abhishek",
-        ratings: "5"
-    },
-    // Add more products as needed
-];
-
-const Home = ({ searchQuery }) => {
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    console.log("Current Search Query:", searchQuery); // Log the search query here
-
+const Home = () => {
     return (
-        <Fragment>
-            <MetaData title="hi this side karan aggarwal" />
-
-            <div className="banner">
-                <p>Welcome to Ecommerce</p>
-                <h1>FIND AMAZING PRODUCTS BELOW</h1>
-
-                <a href="#container">
-                    <button>
-                        Scroll <CgMouse />
-                    </button>
-                </a>
-            </div>
-
-            <h2 className="homeHeading">Featured Products</h2>
-
-            <div className="container" id="container">
-                {filteredProducts.length > 0 ? (
-                    filteredProducts.map(product => (
-                        <ProductCard key={product._id} product={product} />
-                    ))
-                ) : (
-                    <p>No products found</p>
-                )}
-            </div>
-        </Fragment>
+        <div className="home-container">
+            <Container>
+                <Row className="home-intro">
+                    <Col md={12} className="text-center">
+                        <h1 className="home-title">Welcome to Quick Clinic</h1>
+                        <p className="home-description">
+                            Your health is our priority. Find the best healthcare services and stay healthy.
+                        </p>
+                        <Button href="/about" className="home-btn">Learn More</Button>
+                    </Col>
+                </Row>
+            </Container>
+        </div>
     );
 };
 
