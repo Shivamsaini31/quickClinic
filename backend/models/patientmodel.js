@@ -7,19 +7,19 @@ const patientSchema = new mongoose.Schema({
       },
       appointment: [
         {
-          doctor_name: {
+          doc_name: {
             type: String,
             required: true,
           },
-          doctor_id: {
+          doc_id: {
             type: String,
             required: true,
           },
-          doctor_email:{
+          doc_email:{
             type: String,
             required: true,
           },
-          doctor_phone:{
+          doc_phone:{
             type: String,
             required: true,
           },

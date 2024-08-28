@@ -6,15 +6,27 @@ const sendToken = require('../utils/jwtToken');
 const sendEmail = require('../utils/sendemail');
 
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, phoneNumber, city, pincode, specialty } = req.body;
 
+  // Validate role to ensure specialty is required if the role is 'doctor'
+  if (role === 'doctor' && !specialty) {
+    return res.status(400).json({
+      success: false,
+      message: "Specialty is required for doctors.",
+    });
+  }
+
+  // Create user based on provided details
   try {
     const user = await User.create({
       name,
       email,
       password,
       role,
-     
+      phoneNumber,
+      city,
+      pincode,
+      specialty: role === 'doctor' ? specialty : undefined, // Include specialty only if role is 'doctor'
     });
 
     sendToken(user, 201, res);
