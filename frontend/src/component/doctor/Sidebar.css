@@ -1,0 +1,19 @@
+ 
+.sidebar1 {
+    width: 250px;
+    background-color: #f8f9fa;
+    padding: 20px;
+  }
+  
+  .sidebar-item1 {
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .sidebar-item1.active {
+    background-color: #e9ecef;
+    border-radius: 5px;
+  }
+  
