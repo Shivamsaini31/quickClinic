@@ -14,6 +14,7 @@ import Patient_Dashboard from './component/patient/Patient_Dashboard.js';
 import PrivateRoute from './privateroutes/privateroute.js';
 import Signup from './component/signup/signup.js';
 import Forgot from './component/login/forgot.js'
+import Appointment from './component/patient/appointment/appointment.js'
 function App() {
    
 
@@ -27,7 +28,7 @@ function App() {
                         <Route path='/login' element={<Login />} />
                         <Route path='/doctor/dashboard/:id' element={<Doc_Dashboard/>} />
                         <Route path='/patient/dashboard/:id' element={<Patient_Dashboard/>} />
-                        
+                        <Route path='/patient/dashboard/:id/appointment' element={<Appointment/>}/>
                         <Route path='/signup' element={<Signup />} />
                         <Route path='/forgot' element={<Forgot />} />
                     

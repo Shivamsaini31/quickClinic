@@ -1,0 +1,213 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap');
+
+/* Basic Styles */
+/* Container for centering content */
+/* Full page container */
+.page-container {
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  height: 100vh; /* Full viewport height */
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Background gradient */
+  padding: 2rem; /* Add padding to avoid touching edges */
+  position: relative; /* Position relative for absolute positioning of heading */
+  padding-top: 50px; /* Adjust as needed to prevent collision with the header */
+  padding-bottom: 50px; /* Adjust as needed to prevent collision with the footer */
+  min-height: 100vh;
+}
+/* appointment.css */
+
+/* Add padding to the top and bottom to prevent collision with the header and footer */
+
+
+/* Add margin to the doctor-cards-container to create space */
+.doctor-cards-container {
+  margin-top: 20px; /* Adjust as needed for spacing between the search form and doctor cards */
+  margin-bottom: 20px; /* Adjust as needed for spacing above the footer */
+}
+
+/* Heading Styles */
+.heading {
+  position: absolute; /* Absolute positioning */
+  top: 1rem; /* Distance from the top of the page */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust position to center accurately */
+  text-align: center; /* Center-align text */
+  color: #0d47a1; /* Text color */
+  font-family: 'Roboto', sans-serif; /* Font family */
+  font-size: 2.5rem; /* Font size */
+  font-weight: 700; /* Font weight */
+  margin: 0; /* Remove default margin */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Text shadow */
+}
+
+/* Animated Form Styles */
+.animated-form {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 1s ease-in-out;
+  max-width: 400px;
+  width: 100%;
+  margin-left: 110px;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  height: 100vh; /* Full viewport height */
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Background gradient */
+  padding: 2rem; /* Add some padding */
+}
+
+/* Heading Styles */
+.text-center {
+  text-align: center; /* Center-align the text */
+  color: #0d47a1; /* Set a vibrant color for the text */
+  font-family: 'Roboto', sans-serif; /* Use a clean, modern font */
+  font-size: 2.5rem; /* Adjust the size for prominence */
+  font-weight: 700; /* Bold text */
+  margin: 0; /* Remove default margin */
+  margin-bottom: 2rem; /* Space below the heading */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+  animation: fadeInDown 1s ease-out; /* Animation for smooth appearance */
+}
+
+/* Animation for smooth entrance */
+@keyframes fadeInDown {
+  from {
+      opacity: 0;
+      transform: translateY(-20px); /* Start from above */
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0); /* Move to original position */
+  }
+}
+
+/* Animated Form Styles */
+.animated-form {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 1s ease-in-out;
+  max-width: 400px;
+  width: 100%;
+}
+.booking-page {
+    padding: 2rem;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.booking-page .header {
+    margin-bottom: 2rem;
+    color: #0d47a1;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    animation: bounceIn 1s ease-in;
+    text-align: center; /* Center text in header */
+}
+
+.booking-page .animated-form-container {
+    display: flex;
+    justify-content: flex-start; /* Align form to the left */
+}
+
+.animated-form {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in-out;
+    max-width: 400px;
+    margin-right: auto;
+    width: 100%;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.animated-input {
+    border: 2px solid #90caf9;
+    border-radius: 0.5rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    padding: 0.75rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    max-width: 100%; /* Ensure the input doesn't exceed its container */
+}
+
+.animated-input:focus {
+    border-color: #0d47a1;
+    box-shadow: 0 0 8px rgba(13, 71, 161, 0.5);
+    transform: translateY(-2px);
+}
+
+.animated-button {
+    background-color: #0d47a1;
+    border: none;
+    border-radius: 0.5rem;
+    color: #ffffff;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.animated-button:hover {
+    background-color: #003c8f;
+    transform: scale(1.05);
+}
+
+.animated-button:active {
+    background-color: #002c6c;
+    transform: scale(1);
+}
+
+/* Custom styles for react-select */
+.animated-select {
+    border: 2px solid #90caf9;
+    border-radius: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.react-select__menu {
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.react-select__menu-list {
+    max-height: 200px; /* Adjust height as needed */
+    overflow-y: auto;
+    font-family: 'Poppins', sans-serif;
+}
+
+.react-select__option {
+    transition: background-color 0.2s ease;
+}
+
+.react-select__option:hover {
+    background-color: #e3f2fd;
+}
+/* Heading Styles */

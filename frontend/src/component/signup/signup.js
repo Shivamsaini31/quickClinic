@@ -20,6 +20,8 @@ const SignupPage = () => {
   const [pincode, setPincode] = useState(''); // State for pincode
   const [specialty, setSpecialty] = useState(''); // State for specialty
   const [darkMode, setDarkMode] = useState(false);
+  const [city, setcity] = useState('');
+
   const navigation = useNavigate();
 
   const onSignup = async (e) => {
@@ -32,7 +34,8 @@ const SignupPage = () => {
         password,
         role,
         phoneNumber,
-        pincode, // Include pincode in the request
+        pincode,
+        city, // Include pincode in the request
         specialty: role === 'doctor' ? specialty : undefined, // Include specialty if role is doctor
       });
       console.log("data is here", data);
@@ -113,6 +116,13 @@ const SignupPage = () => {
               placeholder="Pincode"
               className="input-field"
               value={pincode}
+            />
+             <input
+              type="text"
+              onChange={(e) => setcity(e.target.value)}
+              placeholder="City"
+              className="input-field"
+              value={city}
             />
 
             {/* Role Selection */}

@@ -150,15 +150,28 @@ res.status(200).json({
     alldocs
 });
 });
-exports.doctorswithspeciallity =catchAsyncErrors(async (req,res,next)=>{
-    const {speciallity,city} =req.body;
-    const alldocs=await User.find({role:"doctor",city,speciallity});
-    
+exports.doctorswithspeciality = catchAsyncErrors(async (req, res, next) => {
+    const { specialty, city } = req.query; // Use req.query for GET requests
+  
+    if (!specialty || ! city) {
+      return res.status(400).json({
+        success: false,
+        message: 'Specialty and city are required.'
+      });
+    }
+  
+    // Query the database for doctors based on city and specialty
+    const alldocs = await User.find({ role:'doctor', city, specialty });
+    console.log(alldocs, specialty, city);
+  
+    // Send the response
     res.status(200).json({
-        success: true,
-        alldocs
+      success: true,
+      message: 'Doctors fetched successfully.',
+      alldocs
     });
-});
+  });
+  
 exports.cancelappointment = catchAsyncErrors(async (req, res, next) => {
         const { id } = req.params; // Patient ID from request parameters
         const { appointmentNumber } = req.body; // Appointment number from request body

@@ -26,8 +26,15 @@ const onsubmit = async (e) => {
     if (data.success) {
       // If the login is successful, navigate to the home page
       const id=data.user._id;
-      console.log("Login successful, redirecting to home page...",id);
-      navigate(`/doctor/dashboard/${id}`);
+      const role=data.user.role;
+      console.log("Login successful, redirecting to home page...",data);
+      if(role==='patient'){
+        navigate(`/patient/dashboard/${id}`);
+      }
+      else {
+        navigate(`/doctor/dashboard/${id}`);
+      }
+      
     } else {
       // If login fails (e.g., wrong credentials), navigate to the signup page
      alert("Login failed,try again ");

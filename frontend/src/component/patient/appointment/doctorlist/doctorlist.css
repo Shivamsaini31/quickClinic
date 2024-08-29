@@ -1,0 +1,86 @@
+/* doctorlist.css */
+
+/* Container styles */
+.doctor-list-page {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+}
+
+/* Card styles */
+.doctor-card {
+  border: none;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, #fff6e1, #ffe7a0);
+  border-radius: 15px;
+}
+
+.doctor-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Card body styles */
+.doctor-card .card-body {
+  padding: 20px;
+  text-align: center;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+}
+
+.doctor-card .card-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #ff6f61;
+  font-weight: bold;
+  animation: fadeIn 1s ease-out;
+}
+
+.doctor-card .card-text {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #555;
+  animation: slideIn 1s ease-out;
+}
+
+.animated-button {
+  background: linear-gradient(90deg, #ff8a00, #e52e71);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 50px;
+  transition: background 0.5s, transform 0.3s;
+}
+
+.animated-button:hover {
+  background: linear-gradient(90deg, #e52e71, #ff8a00);
+  transform: scale(1.1);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

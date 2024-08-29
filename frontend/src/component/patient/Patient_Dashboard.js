@@ -69,7 +69,7 @@ function App() {
       </div>
       <h2>Book an appointment for an in-clinic consultation</h2>
       <SpecialtyGrid specialties={specialties} />
-      <Link to={'/appointments'} ><button className='linkyo'>Consult Now</button></Link> 
+      <Link to={'/appointment/appointment.js'} ><button className='linkyo'>Consult Now</button></Link> 
     </div>
     </>
   );
