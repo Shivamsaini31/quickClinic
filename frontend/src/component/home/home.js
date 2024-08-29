@@ -1,23 +1,79 @@
 import React from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import './home.css';
-
-const Home = () => {
+import { Carousel, Container, Row, Col, Button } from 'react-bootstrap';
+import './home.css'; // Import custom CSS for additional styling
+const HomePage = () => {
     return (
-        <div className="home-container">
-            <Container>
-                <Row className="home-intro">
-                    <Col md={12} className="text-center">
-                        <h1 className="home-title">Welcome to Quick Clinic</h1>
-                        <p className="home-description">
-                            Your health is our priority. Find the best healthcare services and stay healthy.
-                        </p>
-                        <Button href="/about" className="home-btn">Learn More</Button>
-                    </Col>
-                </Row>
-            </Container>
+      <div className="homepage">
+        {/* Hero Section */}
+        <div className="hero-section d-flex align-items-center justify-content-center">
+          <Container>
+            <Row>
+              <Col md={6} className="text-center text-md-left">
+                <h1 className="display-4 text-light animate-fade-in">Welcome to Doctor Quick Clinic</h1>
+                <p className="text-light lead animate-slide-in">Your health, our priority. Join us today for a healthier tomorrow!</p>
+                <Button variant="primary" size="lg" className="mt-3 animate-bounce">Get Started</Button>
+              </Col>
+            </Row>
+          </Container>
         </div>
+  
+        {/* Slideshow Section */}
+        <Container className="mt-5">
+          <Carousel fade className="carousel-animated">
+            <Carousel.Item>
+              <img
+                className="d-block w-100"
+                src="https://via.placeholder.com/1200x500?text=Quality+Healthcare"
+                alt="Quality Healthcare"
+              />
+              <Carousel.Caption>
+                <h3 className="animate-zoom-in">Quality Healthcare</h3>
+                <p className="animate-fade-in">We provide the best medical care in the city.</p>
+              </Carousel.Caption>
+            </Carousel.Item>
+            <Carousel.Item>
+              <img
+                className="d-block w-100"
+                src="https://via.placeholder.com/1200x500?text=Experienced+Doctors"
+                alt="Experienced Doctors"
+              />
+              <Carousel.Caption>
+                <h3 className="animate-zoom-in">Experienced Doctors</h3>
+                <p className="animate-fade-in">Our team of doctors are highly skilled and experienced.</p>
+              </Carousel.Caption>
+            </Carousel.Item>
+            <Carousel.Item>
+              <img
+                className="d-block w-100"
+                src="https://via.placeholder.com/1200x500?text=State-of-the-art+Facilities"
+                alt="State-of-the-art Facilities"
+              />
+              <Carousel.Caption>
+                <h3 className="animate-zoom-in">State-of-the-art Facilities</h3>
+                <p className="animate-fade-in">We use the latest technology to provide exceptional care.</p>
+              </Carousel.Caption>
+            </Carousel.Item>
+          </Carousel>
+        </Container>
+  
+        {/* About Us Section */}
+        <Container className="about-us mt-5">
+          <Row>
+            <Col md={6} className="animate-slide-up">
+              <img src="https://via.placeholder.com/600x400" alt="Clinic" className="img-fluid rounded" />
+            </Col>
+            <Col md={6} className="d-flex flex-column justify-content-center animate-slide-up">
+              <h2>About Doctor Quick Clinic</h2>
+              <p>
+                Doctor Quick Clinic is dedicated to providing comprehensive healthcare services. Our mission is to enhance
+                the well-being of our community through compassionate care and the latest medical advancements.
+              </p>
+              <Button variant="outline-primary" size="lg" className="mt-3 animate-hover-grow">Learn More</Button>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     );
-};
-
-export default Home;
+  };
+  
+  export default HomePage;
