@@ -1,0 +1,24 @@
+
+.specialty-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+  
+  .specialty-item {
+    width: 150px;
+    text-align: center;
+    margin: 10px;
+  }
+  
+  .specialty-placeholder {  
+    width: 40px;
+    object-fit: fill;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .imgtag {
+    height: 180px;
+  }

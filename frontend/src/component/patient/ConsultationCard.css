@@ -1,0 +1,26 @@
+
+.consultation-card {
+    text-align: center;
+    margin: 20px;
+  }
+  
+  .consultation-card img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+  }
+  
+  .consultation-card h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .consultation-card button {
+    padding: 8px 16px;
+    background-color: #008cba;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
