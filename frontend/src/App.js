@@ -10,6 +10,7 @@ import Home from './component/home/home';
 import Login from './component/login/login';
 import { AuthProvider } from './component/auth/AuthContext.js';
 import Doc_Dashboard from './component/doctor/dashboard.js';
+import Patient_Dashboard from './component/patient/Patient_Dashboard.js';
 import PrivateRoute from './privateroutes/privateroute.js';
 import Signup from './component/signup/signup.js';
 import Forgot from './component/login/forgot.js'
@@ -24,7 +25,8 @@ function App() {
                     <Routes>
                         <Route path='/' element={<Home  />} />
                         <Route path='/login' element={<Login />} />
-                        <Route path='/doctor/dashboard/:id' element={<PrivateRoute element={Doc_Dashboard} />} />
+                        <Route path='/doctor/dashboard/:id' element={<Doc_Dashboard/>} />
+                        <Route path='/patient/dashboard/:id' element={<Patient_Dashboard/>} />
                         
                         <Route path='/signup' element={<Signup />} />
                         <Route path='/forgot' element={<Forgot />} />
