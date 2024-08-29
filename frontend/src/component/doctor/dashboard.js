@@ -1,17 +1,21 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import Header from './Header';
+import SummaryCards from './SummaryCards';
+import DataTable from './DataTable';
+import './Dashboard.css';
 
-const Doc_Dashboard = () => {
-  const { id } = useParams();
-  
-  // Use the id as needed
-  console.log("Doctor ID in dashboard:", id);
+const Doc_Dashboard = () => { 
 
   return (
-    <div>
-      <h1>Doctor Dashboard</h1>
-      {/* Render dashboard content here */}
+    <div className="app1">
+    <Sidebar />
+    <div className="main-content1">
+      <Header />
+      <SummaryCards />   
+      <DataTable /> 
     </div>
+  </div>
   );
 };
 
