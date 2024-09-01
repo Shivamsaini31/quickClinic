@@ -59,7 +59,7 @@ const handleGoogleLogin = async () => {
          user: data.user,
      };
       localStorage.setItem('authState', JSON.stringify(newAuthState));
-      navigate('/');
+      navigate('/home');
     }
     else {
       alert("this email is not register")

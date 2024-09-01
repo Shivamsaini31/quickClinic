@@ -1,0 +1,93 @@
+.appointment-actions-container {
+    padding: 8rem;
+  }
+  
+  .appointment-card {
+    padding: 30px;
+    margin: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .appointment-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .action-button {
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .postpone-button {
+    background-color: #007bff; /* Customize primary color */
+    color: #fff;
+  }
+  
+  .cancel-button {
+    background-color: #dc3545; /* Red color for cancel button */
+    color: #fff;
+  }
+  
+  .cancel-button:hover {
+    background-color: #c82333; /* Dark red color on hover */
+  }
+  
+  .date-picker-container {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    gap: 10px;
+
+  }
+  
+  .date-picker {
+    
+    width: 80%; /* Ensure it takes the full width */
+  }
+  
+  .time-picker {
+    width: 30%;
+  }
+  
+  .submit-button {
+    margin-top: 10px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .appointment-card {
+      margin: 1rem;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .button-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .action-button {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .appointment-card {
+      padding: 1rem;
+    }
+  
+    .action-button {
+      font-size: 0.9rem;
+    }
+  }
+  

@@ -40,11 +40,23 @@ const SignupPage = () => {
       });
       console.log("data is here", data);
       if (data.success) {
-        login(email, password);
-        navigation('/');
+        const data2  = await login(email, password);
+        console.log("login page data is here", data2);
+        
+        if (data2.success) {
+          // If the login is successful, navigate to the home page
+          const id=data2.user._id;
+          const role=data2.user.role;
+          console.log("Login successful, redirecting to home page...",data2);
+          if(role==='patient'){
+            navigation(`/patient/dashboard/${id}`);
+          }
+          else {
+            navigation(`/doctor/dashboard/${id}`);
+          }
       } else {
-        console.log(data);
-      }
+        console.log(data2);
+      }}
     } catch (error) {
       alert(error.response.data.message);
       // Handle signup error (e.g., show an error message)

@@ -1,0 +1,118 @@
+/* General app styles */
+.app {
+  font-family: Arial, sans-serif;
+  padding: 80px;
+  margin-top: 30px;
+  background-color: #f9f9f9;
+}
+
+/* Header styles */
+.header {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.header h1 {
+  font-size: 24px;
+}
+
+.header p {
+  color: #666;
+  margin: 10px 0;
+}
+
+/* Button styles */
+.view-specialities,
+.linkyo {
+  padding: 10px 20px;
+  background-color: #008cba;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  font-size: medium;
+  text-decoration: none;
+}
+
+/* Button hover effect */
+.view-specialities:hover,
+.linkyo:hover {
+  background-color: #005f6b;
+}
+
+/* Container styles */
+.app-container {
+  display: flex;
+  padding-top: 100px;
+  margin-top: 100px;
+  justify-content: space-around;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+/* Consultation cards */
+.consultation-cards {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+/* Individual consultation card styles */
+.consultation-cards > * {
+  flex: 1;
+  margin: 10px;
+  max-width: calc(33.333% - 20px); /* Adjust to three cards per row with spacing */
+}
+
+/* Heading styles */
+h2 {
+  font-size: 22px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .consultation-cards > * {
+    max-width: calc(50% - 20px); /* Two cards per row */
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    padding-top: 80px;
+    margin-top: 80px;
+    align-items: center;
+  }
+
+  .consultation-cards > * {
+    max-width: calc(100% - 20px); /* One card per row */
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .header p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-specialities,
+  .linkyo {
+    padding: 8px 16px;
+    font-size: small;
+  }
+
+  .header h1 {
+    font-size: 18px;
+  }
+
+  .header p {
+    font-size: 12px;
+  }
+}

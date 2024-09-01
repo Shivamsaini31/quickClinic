@@ -1,21 +1,22 @@
 // src/App.js
 import React from 'react'; 
-import Card from '../common/Card';
+import Card from '../../common/Card';
 import './Pat_Dash.css'
-import url_to_doctor_image1 from '../../images/1.jpg'
-import url_to_doctor_image2 from '../../images/2.jpg'
-import url_to_doctor_image3 from '../../images/3.jpg' 
+
+import url_to_doctor_image1 from '../../../images/1.jpg';
+import url_to_doctor_image2 from '../../../images/2.jpg'
+import url_to_doctor_image3 from '../../../images/3.jpg' 
 import ConsultationCard from './ConsultationCard';
 import SpecialtyGrid from './SpecialtyGrid';
-import menstrualcycle from '../../images/mens.jpg'
-import acne from '../../images/acne.jpg'
-import cold_cough from '../../images/cold_cough.jpg'
-import child_not from '../../images/child.avif'
-import depp from '../../images/depp.jpg'
-import dentist from '../../images/oral.png'
-import gynecologist from '../../images/Gynecologist.jpg'
-import nutrition from '../../images/Nutrition.jpg'
-import physiotherapist from '../../images/Physiotherapist.jpg'
+import menstrualcycle from '../../../images/mens.jpg'
+import acne from '../../../images/acne.jpg'
+import cold_cough from '../../../images/cold_cough.jpg'
+import child_not from '../../../images/child.avif'
+import depp from '../../../images/depp.jpg'
+import dentist from '../../../images/oral.png'
+import gynecologist from '../../../images/Gynecologist.jpg'
+import nutrition from '../../../images/Nutrition.jpg'
+import physiotherapist from '../../../images/Physiotherapist.jpg'
 import { Link } from 'react-router-dom';
 
  

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import './SpecialtyGrid.css';
 
@@ -8,7 +7,8 @@ function SpecialtyGrid({ specialties }) {
       {specialties.map((specialty, index) => (
         <div key={index} className="specialty-item">
           <div className="specialty-placeholder"></div>
-          <img src={specialty.image} className='imgtag' alt='image hai bhai'/>
+          {/* Modified alt attribute to remove redundant words */}
+          <img src={specialty.image} className='imgtag' alt={specialty.title} />
           <h4>{specialty.title}</h4>
         </div>
       ))}

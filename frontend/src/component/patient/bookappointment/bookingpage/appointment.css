@@ -1,37 +1,68 @@
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap');
-
-/* Basic Styles */
-/* Container for centering content */
-/* Full page container */
+body {
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+}
 .page-container {
-  display: flex;
-  flex-direction: column; /* Arrange items vertically */
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
-  height: 100vh; /* Full viewport height */
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Background gradient */
-  padding: 2rem; /* Add padding to avoid touching edges */
-  position: relative; /* Position relative for absolute positioning of heading */
-  padding-top: 50px; /* Adjust as needed to prevent collision with the header */
-  padding-bottom: 50px; /* Adjust as needed to prevent collision with the footer */
-  min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
+    align-items: center; /* Center content horizontally */
+    justify-content: flex-start; /* Start from the top */
+    min-height: 100vh; /* Ensures container covers full viewport height */
+    width: 100%; /* Full width of the viewport */
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Background gradient */
+    padding: 2rem; /* Adds spacing inside the container */
+    box-sizing: border-box; /* Include padding and border in width/height calculation */
+    overflow: hidden; /* Prevent overflow */
+    margin-top:60px; /* Remove any default margin */
 }
-/* appointment.css */
 
-/* Add padding to the top and bottom to prevent collision with the header and footer */
+/* Ensure content within the container adjusts its size */
+.page-container > * {
+    max-width: 100%; /* Ensure children do not exceed the container width */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
 
-
-/* Add margin to the doctor-cards-container to create space */
+/* Doctor Cards Container */
 .doctor-cards-container {
-  margin-top: 20px; /* Adjust as needed for spacing between the search form and doctor cards */
-  margin-bottom: 20px; /* Adjust as needed for spacing above the footer */
+    margin-top: 20px; /* Space between form and cards */
+    width: 100%; /* Full width */
+    display: grid; /* Use grid for layout */
+    grid-template-columns: repeat(3, 1fr); /* Responsive columns */
+    gap: 15px; /* Space between cards */
+    justify-content: center;
+    
+     /* Center cards in the container */
+    padding-right: 180px;
+    padding-left: 10px;
+    align-items: center; /* Remove padding to ensure proper fit */
+    box-sizing: border-box; /* Include padding and border in width calculation */
 }
 
+/* Adjustments for Doctor Cards */
+.doctor-card {
+    box-sizing: border-box; /* Include padding and border in width calculation */
+    /* Maintain default dimensions or adjust as needed */
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    .doctor-cards-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .doctor-cards-container {
+        grid-template-columns: 1fr; /* 1 column on very small screens */
+    }
+}
+  
 /* Heading Styles */
 .heading {
   position: absolute; /* Absolute positioning */
-  top: 1rem; /* Distance from the top of the page */
+  top: 5rem; /* Distance from the top of the page */
   left: 50%; /* Center horizontally */
   transform: translateX(-50%); /* Adjust position to center accurately */
   text-align: center; /* Center-align text */
@@ -45,25 +76,20 @@
 
 /* Animated Form Styles */
 .animated-form {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1s ease-in-out;
-  max-width: 400px;
-  width: 100%;
-  margin-left: 110px;
-}
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 1 8px 16px rgba(67, 65, 65, 0.2);
+    animation: fadeIn 1s ease-in-out;
+    max-width: 400px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 39px; /* Space from the header */
+    margin-bottom: 20px; /* Space from the doctor cards */
+    box-sizing: border-box; /* Ensure padding is included in width */
+  }
 
-.page-container {
-  display: flex;
-  flex-direction: column; /* Arrange items vertically */
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
-  height: 100vh; /* Full viewport height */
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Background gradient */
-  padding: 2rem; /* Add some padding */
-}
 
 /* Heading Styles */
 .text-center {
@@ -91,15 +117,7 @@
 }
 
 /* Animated Form Styles */
-.animated-form {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1s ease-in-out;
-  max-width: 400px;
-  width: 100%;
-}
+
 .booking-page {
     padding: 2rem;
     background: linear-gradient(135deg, #e3f2fd, #bbdefb);
