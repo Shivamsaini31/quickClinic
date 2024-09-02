@@ -3,295 +3,502 @@ const Doctor = require('../models/doctormodel');
 const Patient=require('../models/patientmodel');
 const { v4: uuidv4 } = require('uuid'); // Import the UUID package
 const User = require('../models/usermodel');
-exports.newappointment = catchAsyncErrors(async (req, res, next) => {
-    const { id } = req.params; // Extract the patient ID from the request parameters
-    const { doc_id, date, time, fees, paid } = req.body;
-    // Generate a unique appointment number (UUID)
+const Appointment =require('../models/appointmentmodel');
+const DoctorSchedule =require('../models/doctorschedulemodel');
+exports.newappointment = catchAsyncErrors(async (req, res) => {
+    const { id } = req.params; // Patient ID
+    const { doc_id, date, time, paid } = req.body;
+
+    // Generate a unique appointment number
     const appointmentNumber = uuidv4();
-    // Find the doctor and patient by user ID
-    const doctor_info = await User.findById(doc_id);
-    const patient_info = await User.findById(id);
+
+    // Find the patient and doctor
+    const patient = await Patient.findOne({ user: id });
+    const doctor = await Doctor.findById(doc_id);
     
-    if (!doctor_info || !patient_info) {
-        return res.status(404).json({ success: false, message: "Doctor or Patient not found" });
+    // Find the doctor's schedule
+    const schedule = await DoctorSchedule.findOne({ doctor: doc_id });
+
+    if (!patient || !doctor || !schedule) {
+        return res.status(404).json({ success: false, message: "Doctor, Patient, or Schedule not found" });
     }
 
-    const doc_name = doctor_info.name;
-    const doc_email = doctor_info.email;
-    const doc_phone = doctor_info.phoneNumber;
-    const patient_name = patient_info.name;
-    const patient_email = patient_info.email;
-    const patient_phone = patient_info.phoneNumber;
+    // Check if the appointment already exists
+    const existingAppointment = await Appointment.findOne({ date, time, patient: patient._id,status:"Scheduled"});
+    if (existingAppointment) {
+        return res.status(400).json({ success: false, message: "Appointment already exists" });
+    }
 
-    // Find or create the doctor document
-    let doctor = await Doctor.findOne({ user: doc_id });
-    
-    if (!doctor) {
-        doctor = new Doctor({
-            user: doc_id,
-            appointment: []
+    // Check if the requested time is available
+    const isAvailable = !schedule.occupiedSlots.some(slot => 
+        slot.date.toISOString().split('T')[0] === new Date(date).toISOString().split('T')[0] &&
+        slot.timeSlots.some(ts => ts.timeSlot === time)
+    );
+
+    if (!isAvailable) {
+        return res.status(400).json({ success: false, message: "Selected time slot is not available" });
+    }
+
+    // Create a new appointment
+    const appointment = await Appointment.create({
+        doctor: doc_id,
+        patient: patient._id,
+        date,
+        time,
+        fees: doctor.fees, // Fetch fees from doctor's data
+        paid,
+        appointmentNumber,
+        status: "Scheduled"
+    });
+
+    // Update DoctorSchedule with new occupied slot
+    const dateStr = new Date(date).toISOString().split('T')[0];
+    const existingSlot = schedule.occupiedSlots.find(slot => slot.date.toISOString().split('T')[0] === dateStr);
+
+    if (existingSlot) {
+        // Update the existing timeSlots for the date
+        existingSlot.timeSlots.push({
+            timeSlot: time,
+            appointmentId: appointment._id
+        });
+    } else {
+        // Add a new slot if no existing slot for the date
+        schedule.occupiedSlots.push({
+            date: new Date(date),
+            timeSlots: [{
+                timeSlot: time,
+                appointmentId: appointment._id
+            }]
         });
     }
 
-    // Check if the appointment already exists to prevent duplicates
-    const existingAppointment = doctor.appointment.find(app => app.appointmentNumber === appointmentNumber);
-
-    if (!existingAppointment) {
-        doctor.appointment.push({
-            patient_name,
-            patient_id: id,
-            patient_email,
-            patient_phone,
-            date,
-            time,
-            fees,
-            paid,
-            appointmentNumber, // Add the unique appointment number
-            status: "Scheduled",
-        });
-
-        // Save the doctor document
-        await doctor.save();
-    }
-
-    // Find or create the patient document
-    let patient = await Patient.findOne({ user: id });
-    
-    if (!patient) {
-        patient = new Patient({
-            user: id,
-            appointment: []
-        });
-    }
-
-    // Check if the appointment already exists to prevent duplicates
-    const existingPatientAppointment = patient.appointment.find(app => app.appointmentNumber === appointmentNumber);
-
-    if (!existingPatientAppointment) {
-        patient.appointment.push({
-            doc_id,
-            doc_name,
-            doc_email,
-            doc_phone,
-            date,
-            time,
-            fees,
-            paid,
-            appointmentNumber, // Add the unique appointment number
-            status: "Scheduled",
-        });
-
-        // Save the patient document
-        await patient.save();
-    }
+    // Save the updated schedule
+    await schedule.save();
 
     res.status(201).json({
         success: true,
-        doctor,
-        patient
+        appointment
     });
 });
 exports.updatepaymentstatus = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params;
-    const {appointmentNumber}=req.body;
+    const { appointmentNumber } = req.body;
 
-   const patient =await Patient.findOne({
-     user:id,
-    'appointment.appointmentNumber': appointmentNumber
-    });
-    const appointmentIndex_P = patient.appointment.findIndex(
-        app => app.appointmentNumber === appointmentNumber
-    );
-    const doc_id=patient[appointmentIndex_P].doc_id;
-    const doctor=await Patient.findOne({
-        user:doc_id,
-       'appointment.appointmentNumber': appointmentNumber
-       });
-       const appointmentIndex_D = doctor.appointment.findIndex(
-        app => app.appointmentNumber === appointmentNumber
-    );
-    if (!doctor || patient) {
-        return res.status(404).json({
-            success: false,
-            message: 'Doctor or appointment not found',
-        });
-    }
-
-
+    // Find the appointment by appointment number
+    const appointment = await Appointment.findOne({ appointmentNumber });
     
-  
-    if (appointmentIndex_D === -1 || appointmentIndex_P==-1) {
+    if (!appointment) {
         return res.status(404).json({
             success: false,
             message: 'Appointment not found',
         });
     }
-
-    // Update the payment status
-    doctor.appointment[appointmentIndex_D].paid = true;
-    patient.appointment[appointmentIndex_P].paid = true;
-
-
-    // Save the updated doctor document
-    await doctor.save();
+    appointment.paid=true;
+    await appointment.save();
 
     res.status(200).json({
         success: true,
-        doctor,
+       appointment,
+       meesage:"succefully updated payment status"
+    });
+});
+exports.alldoctors = catchAsyncErrors(async (req, res, next) => {
+    // Fetch all doctors and populate the user details
+    const alldocs = await Doctor.find()
+        .populate({
+            path: 'user', // Field in Doctor model that references the User model
+            select: 'name email phoneNumber city state pincode', // Specify fields you want to include from the User model
+        });
+
+    res.status(200).json({
+        success: true,
+        doctors: alldocs
+    });
+});
+exports.cancelAppointment = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params; // Patient ID from params
+    const { appointmentNumber } = req.body; // Appointment number from body
+
+    // Find the appointment
+    const appointment = await Appointment.findOne({ appointmentNumber });
+    if (!appointment) {
+        return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+
+    // Find and update the doctor's schedule
+    const schedule = await DoctorSchedule.findOne({ doctor: appointment.doctor });
+    if (!schedule) {
+        return res.status(404).json({ success: false, message: 'Doctor schedule not found' });
+    }
+
+
+    schedule.occupiedSlots = schedule.occupiedSlots.map(slot => {
+        if (slot.date.toISOString() === appointment.date.toISOString()) {
+            return {
+                ...slot,
+                timeSlots: slot.timeSlots.filter(ts => ts.timeSlot !== appointment.time)
+            };
+        }
+        return slot;
+    }).filter(slot => slot.timeSlots.length > 0);
+    // Save the updated schedule
+    await schedule.save();
+ appointment.status="Canceled";
+    res.status(200).json({
+        success: true,
+        message: 'Appointment cancelled successfully'
+    });
+});
+exports.appointment_of_a_period = catchAsyncErrors(async (req, res, next) => {
+    const { startDate, endDate } = req.body;
+    const { id } = req.params; // Patient ID
+
+    // Find the patient by ID
+    const patient = await Patient.findOne({ user: id });
+    if (!patient) {
+        return res.status(404).json({
+            success: false,
+            message: 'Patient not found'
+        });
+    }
+
+    // Default to very old and very future dates if null
+    const now = new Date();
+    const hundredYearsAgo = new Date(now.setFullYear(now.getFullYear() - 100));
+    const hundredYearsFromNow = new Date(now.setFullYear(now.getFullYear() + 200));
+
+    const effectiveStartDate = startDate ? new Date(startDate) : hundredYearsAgo;
+    const effectiveEndDate = endDate ? new Date(endDate) : hundredYearsFromNow;
+
+    // Ensure endDate is after startDate
+    if (effectiveEndDate < effectiveStartDate) {
+        return res.status(400).json({
+            success: false,
+            message: 'End date must be after start date'
+        });
+    }
+
+    // Find appointments for the specified patient and date range
+    const allAppointments = await Appointment.find({ patient: patient._id })
+        .populate({
+            path: 'doctor', // Field in Appointment model that references the Doctor model
+            select: 'user', // Include only the user field (or other necessary fields) from the Doctor model
+            populate: {
+                path: 'user', // Populate the user field in Doctor model
+                select: 'name email phoneNumber city state pincode', // Specify fields to include from the User model
+            }
+        });
+
+    // Filter appointments based on the date range
+    const filteredAppointments = allAppointments.filter(appointment => {
+        const appointmentDate = new Date(appointment.date);
+        return appointmentDate >= effectiveStartDate && appointmentDate <= effectiveEndDate;
+    });
+
+    res.status(200).json({
+        success: true,
+        appointments: filteredAppointments
+    });
+});
+exports.appointment_history_all = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params;
+    const endDate = new Date(); // Current date and time
+
+    // Find the patient for the specified user
+    const patient = await Patient.findOne({ user: id });
+
+    if (!patient) {
+        return res.status(404).json({ success: false, message: 'Patient not found' });
+    }
+
+    // Find all appointments for the patient with doctor details populated
+    const appointments = await Appointment.find({ patient: patient._id })
+        .populate({
+            path: 'doctor', // Field in Appointment model that references the Doctor model
+            select: 'user', // Include only the user field (or other necessary fields) from the Doctor model
+            populate: {
+                path: 'user', // Populate the user field in Doctor model
+                select: 'name email phoneNumber city state pincode', // Specify fields to include from the User model
+            }
+        });
+
+    // Filter for past appointments
+    const pastAppointments = appointments.filter(app => new Date(app.date) <= endDate);
+
+    res.status(200).json({
+        success: true,
+        appointments: pastAppointments
+    });
+});
+
+exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params;
+    const { startDate, endDate, startTime, endTime,city,specialty,experience,fees,doc_name } = req.body;
+
+    const patient = await Patient.findOne({ user: id });
+
+    if (!patient) {
+        return res.status(404).json({ success: false, message: 'Patient not found' });
+    }
+
+    const now = new Date();
+   
+    const hundredYearsAgo = new Date(now.getFullYear() - 100, now.getMonth(), now.getDate());
+    const hundredYearsFromNow = new Date(now.getFullYear() + 100, now.getMonth(), now.getDate());
+
+    const effectiveStartDate = startDate ? new Date(startDate) : hundredYearsAgo;
+    const effectiveEndDate = endDate ? new Date(endDate) : hundredYearsFromNow;
+    const defaultStartTime = startTime || '00:00:00';
+    const defaultEndTime = endTime || '23:59:59';
+
+    // Find all appointments for the patient
+    const appointments = await Appointment.find({
+        patient: patient._id,
+        date: { $gte: effectiveStartDate, $lte: effectiveEndDate }
+    })
+    .populate({
+        path: 'doctor', // Populate doctor field
+        select: 'specialization experience fees', // Select specific fields from Doctor model
+        populate: {
+            path: 'user', // Populate User model
+            select: 'name city' // Select specific fields from User model
+        }
+    });
+
+    // Filter appointments based on start and end times
+    const filteredAppointments = appointments.filter(app => {
+        const appointmentDateTime = new Date(app.date);
+        const appointmentTime = appointmentDateTime.toTimeString().substring(0, 8);
+
+        return appointmentTime >= defaultStartTime && appointmentTime <= defaultEndTime;
+    });
+ // Filter appointments based on city
+const cityMatches = city ? filteredAppointments.filter(app => app.doctor.user.city.toLowerCase() === city.toLowerCase()) : appointments;
+
+// Filter appointments based on specialty
+const specialtyMatches = specialty ? cityMatches.filter(app => app.doctor.specialization.toLowerCase() === specialty.toLowerCase()) : cityMatches;
+
+
+// Filter appointments based on experience
+const experienceMatches = experience ? specialtyMatches.filter(app => app.doctor.experience >= experience) : specialtyMatches;
+
+// Filter appointments based on fees
+const feesMatches = fees ? experienceMatches.filter(app => app.doctor.fees <= fees) : experienceMatches;
+
+// Filter appointments based on doctor name
+const nameMatches = doc_name ? feesMatches.filter(app => app.doctor.user.name.toLowerCase().includes(doc_name.toLowerCase())) : feesMatches;
+
+
+    res.status(200).json({
+        success: true,
+        appointments:nameMatches
+    });
+});
+
+exports.appointment_future = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params;
+    const currentDate = new Date(); // Current date and time
+
+    // Find the patient by user ID
+    const patient = await Patient.findOne({ user: id });
+
+    if (!patient) {
+        return res.status(404).json({
+            success: false,
+            message: 'Patient not found'
+        });
+    }
+
+    // Retrieve all future appointments for the patient with doctor details populated
+    const futureAppointments = await Appointment.find({
+        patient: patient._id,
+        date: { $gt: currentDate } // Only future appointments
+    })
+    .populate({
+        path: 'doctor', // Field in Appointment model that references the Doctor model
+        select: 'user', // Include only the user field (or other necessary fields) from the Doctor model
+        populate: {
+            path: 'user', // Populate the user field in Doctor model
+            select: 'name email phoneNumber city state pincode', // Specify fields to include from the User model
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        appointments: futureAppointments
+    });
+});
+
+exports.create_patient = catchAsyncErrors(async (req, res) => {
+    const {  medicalHistory, allergies, currentMedications } = req.body;
+const {id}=req.params;
+
+    // Check if a patient with this user already exists
+    const existingPatient = await Patient.findOne({ user:id });
+    if (existingPatient) {
+        return res.status(400).json({
+            success: false,
+            message: 'Patient profile for this user already exists'
+        });
+    }
+
+    // Create a new patient profile linked to the user
+    const patient = await Patient.create({
+        user: id,
+        medicalHistory,
+        allergies,
+        currentMedications
+    });
+
+    res.status(201).json({
+        success: true,
+        message: 'Patient profile created successfully',
         patient
     });
 });
-exports.alldoctors =catchAsyncErrors(async (req,res,next)=>{
+exports.change_date_appointment = catchAsyncErrors(async (req, res) => {
+    const { id } = req.params; // Patient ID from params
+    const { appointmentNumber, date, time } = req.body;
 
-const alldocs=await User.find({role:"doctor"})
-
-res.status(200).json({
-    success: true,
-    alldocs
-});
-});
-exports.doctorswithspeciality = catchAsyncErrors(async (req, res, next) => {
-    const { specialty, city } = req.query; // Use req.query for GET requests
-  
-    if (!specialty || ! city) {
-      return res.status(400).json({
-        success: false,
-        message: 'Specialty and city are required.'
-      });
+    // Find the appointment to be updated
+    const appointment = await Appointment.findOne({ appointmentNumber });
+    if (!appointment) {
+        return res.status(404).json({ success: false, message: 'Appointment not found' });
     }
-  
-    // Query the database for doctors based on city and specialty
-    const alldocs = await User.find({ role:'doctor', city, specialty });
-    console.log(alldocs, specialty, city);
-  
-    // Send the response
-    res.status(200).json({
-      success: true,
-      message: 'Doctors fetched successfully.',
-      alldocs
-    });
-  });
-  
-exports.cancelappointment = catchAsyncErrors(async (req, res, next) => {
-        const { id } = req.params; // Patient ID from request parameters
-        const { appointmentNumber } = req.body; // Appointment number from request body
-    
-        // Find the patient by user ID and appointment number
-        const patient = await Patient.findOne({
-            user: id,
-            'appointment.appointmentNumber': appointmentNumber
-        });
-    
-        if (!patient) {
-            return res.status(404).json({
-                success: false,
-                message: 'Patient or appointment not found',
-            });
-        }
-    
-        // Find the index of the appointment in the patient's appointments
-        const appointmentIndex_P = patient.appointment.findIndex(
-            app => app.appointmentNumber === appointmentNumber
-        );
-    
-        if (appointmentIndex_P === -1) {
-            return res.status(404).json({
-                success: false,
-                message: 'Appointment not found in patient records',
-            });
-        }
-    
-        // Get doctor ID from the patient's appointment
-        const doc_id = patient.appointment[appointmentIndex_P].doc_id;
-    
-        // Find the doctor by user ID and appointment number
-        const doctor = await Doctor.findOne({
-            user: doc_id,
-            'appointment.appointmentNumber': appointmentNumber
-        });
-    
-        if (!doctor) {
-            return res.status(404).json({
-                success: false,
-                message: 'Doctor or appointment not found',
-            });
-        }
-    
-        // Find the index of the appointment in the doctor's appointments
-        const appointmentIndex_D = doctor.appointment.findIndex(
-            app => app.appointmentNumber === appointmentNumber
-        );
-    
-        if (appointmentIndex_D === -1) {
-            return res.status(404).json({
-                success: false,
-                message: 'Appointment not found in doctor records',
-            });
-        }
-    
-        // Check if the appointment is scheduled
-        if (doctor.appointment[appointmentIndex_D].status === "Scheduled" &&
-            patient.appointment[appointmentIndex_P].status === "Scheduled") {
-    
-            // Update the status to "Canceled"
-            doctor.appointment[appointmentIndex_D].status = "Canceled";
-            patient.appointment[appointmentIndex_P].status = "Canceled";
-    
-            // Save the changes
-            await doctor.save();
-            await patient.save();
-    
-            return res.status(200).json({
-                success: true,
-                message: 'Successfully canceled appointment',
-                doctor,
-                patient
-            });
-        }
-    
-        return res.status(400).json({
-            success: false,
-            message: 'Appointment already canceled or not scheduled',
-        });
-});
 
-exports.appointment_of_a_period = catchAsyncErrors(async (req, res, next) => {
-    const { id } = req.params;
-    const { startDate, endDate } = req.body;
+    // Find and update the doctor's schedule
+    const schedule = await DoctorSchedule.findOne({ doctor: appointment.doctor });
+    if (!schedule) {
+        return res.status(404).json({ success: false, message: 'Doctor schedule not found' });
+    }
 
-    // Validate the date inputs
-    if (!startDate || !endDate) {
-        return res.status(400).json({
-            success: false,
-            message: 'Start date and end date are required',
+    // Remove the old slot from the schedule
+    schedule.occupiedSlots = schedule.occupiedSlots.map(slot => {
+        if (slot.date.toISOString() === appointment.date.toISOString()) {
+            return {
+                ...slot,
+                timeSlots: slot.timeSlots.filter(ts => ts.timeSlot !== appointment.time)
+            };
+        }
+        return slot;
+    }).filter(slot => slot.timeSlots.length > 0); // Remove slot if no time slots left
+
+    // Save the updated schedule
+    await schedule.save();
+
+    // Update the appointment with new date and time
+    appointment.date = date;
+    appointment.time = time;
+    await appointment.save();
+
+    // Add the new slot to the schedule
+    const newDate = new Date(date);
+    const newTimeSlot = time;
+    const existingSlot = schedule.occupiedSlots.find(slot => slot.date.toISOString() === newDate.toISOString());
+
+    if (existingSlot) {
+        existingSlot.timeSlots.push({ timeSlot: newTimeSlot, appointmentId: appointment._id });
+    } else {
+        schedule.occupiedSlots.push({
+            date: newDate,
+            timeSlots: [{ timeSlot: newTimeSlot, appointmentId: appointment._id }]
         });
     }
 
-    // Convert date strings to Date objects
-    const startTime = new Date(startDate);
-    const endTime = new Date(endDate);
-
-   
-    if (isNaN(startTime) || isNaN(endTime)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Invalid date format',
-        });
-    }
-
-    // Find appointments within the specified date range
-    const appointments = await Patient.find({
-        'appointment.date': {
-            $gte: startTime,
-            $lte: endTime
-        },
-        'user': id // Ensure the query is filtered by the specific user if needed
-    });
+    // Save the updated schedule with the new slot
+    await schedule.save();
 
     res.status(200).json({
         success: true,
-        appointments
+        message: 'Appointment date and time updated successfully'
+    });
+});
+exports.specific_doctors = catchAsyncErrors(async (req, res, next) => {
+    const { doc_name, city, state, experience, fees, specialty } = req.body;
+
+    // Fetch all doctors and populate user to get name, city, and state
+    const doctors = await Doctor.find()
+        .populate({
+            path: 'user',
+            select: 'name city state'
+        });
+
+    // Filter by exact matches
+    let filteredDoctors = doctors;
+
+    if (city) {
+        const lowerCaseCity = city.toLowerCase();
+        filteredDoctors = filteredDoctors.filter(doc => 
+            doc.user.city.toLowerCase() === lowerCaseCity
+        );
+    }
+
+    if (state) {
+        const lowerCaseState = state.toLowerCase();
+        filteredDoctors = filteredDoctors.filter(doc => 
+            doc.user.state.toLowerCase() === lowerCaseState
+        );
+    }
+
+    if (specialty) {
+        const lowerCaseSpecialty = specialty.toLowerCase();
+        filteredDoctors = filteredDoctors.filter(doc => 
+            doc.specialization.toLowerCase() === lowerCaseSpecialty
+        );
+    }
+
+    // Apply other filters if provided
+    if (experience) {
+        filteredDoctors = filteredDoctors.filter(doc => 
+            doc.experience === experience
+        );
+    }
+
+    if (fees) {
+        filteredDoctors = filteredDoctors.filter(doc => 
+            doc.fees === fees
+        );
+    }
+
+    if (doc_name) {
+        const lowerCaseDocName = doc_name.toLowerCase();
+        filteredDoctors = filteredDoctors.filter(doc => 
+            doc.user.name.toLowerCase().includes(lowerCaseDocName)
+        );
+    }
+
+    res.status(200).json({
+        success: true,
+        doctors: filteredDoctors
+    });
+});
+exports.update_patient = catchAsyncErrors(async (req, res) => {
+    const { id } = req.params; // Patient ID from params
+    const { medicalHistory, allergies, currentMedications } = req.body; // Updated details
+
+    // Find the patient by user ID
+    const patient = await Patient.findOne({ user: id });
+    
+    if (!patient) {
+        return res.status(404).json({
+            success: false,
+            message: 'Patient profile not found'
+        });
+    }
+
+    // Update patient details
+    patient.medicalHistory = medicalHistory !== undefined ? medicalHistory : patient.medicalHistory;
+    patient.allergies = allergies !== undefined ? allergies : patient.allergies;
+    patient.currentMedications = currentMedications !== undefined ? currentMedications : patient.currentMedications;
+
+    // Save updated patient details
+    await patient.save();
+
+    res.status(200).json({
+        success: true,
+        message: 'Patient profile updated successfully',
+        patient
     });
 });
 
-    
+

@@ -1,0 +1,10 @@
+const express = require('express');
+const { createSchedule ,createDoctor, updateDoctor, cancel_appointment, appointment_specific, change_date_appointment} = require('../controllers/doctorcotroller');
+const router=express.Router();
+router.route("/:id/doctor/create_schedule").post(createSchedule);
+router.route("/:id/doctor/create_doctor").post(createDoctor);
+router.route("/:id/doctor/update_doctor").put(updateDoctor);
+router.route("/:id/doctor/cancel_appointment").put(cancel_appointment);
+router.route("/:id/doctor/specific_appointment").get(appointment_specific);
+router.route("/:id/doctor/change_date").put(change_date_appointment);
+module.exports=router;

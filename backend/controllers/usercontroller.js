@@ -6,15 +6,10 @@ const sendToken = require('../utils/jwtToken');
 const sendEmail = require('../utils/sendemail');
 
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  const { name, email, password, role, phoneNumber, city, pincode, specialty } = req.body;
+  const { name, email, password, role, phoneNumber, city, pincode, state } = req.body;
 
   // Validate role to ensure specialty is required if the role is 'doctor'
-  if (role === 'doctor' && !specialty) {
-    return res.status(400).json({
-      success: false,
-      message: "Specialty is required for doctors.",
-    });
-  }
+  
 
   // Create user based on provided details
   try {
@@ -26,7 +21,7 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
       phoneNumber,
       city,
       pincode,
-      specialty: role === 'doctor' ? specialty : undefined, // Include specialty only if role is 'doctor'
+      state
     });
 
     sendToken(user, 201, res);
@@ -47,9 +42,7 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
     }
   }
 });
-
-
-  exports.loginuser = catchAsyncErrors(async (req, res, next) => {
+exports.loginuser = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
 
      
@@ -93,7 +86,6 @@ exports.checkAuthStatus = catchAsyncErrors(async (req, res, next) => {
       user: req.session.user,
   });
 });
-
 exports.logout = catchAsyncErrors(async (req, res, next) => {
     res.cookie("token", null, {
         expires: new Date(Date.now()), // Expire immediately
@@ -154,7 +146,7 @@ exports.forgetpassword = catchAsyncErrors(async (req, res, next) => {
       // Return an error response
       return next(new ErrorHander("Failed to send email. Please try again later.", 500));
     }
-  });
+});
 exports.resetPassword=catchAsyncErrors(async(req,res,next)=>{
  const resetPasswordToken=crypto.createHash("sha256").update(req.params.token).digest(hex);
 const user=await User.findOne({
@@ -177,17 +169,16 @@ user.resetPasswordExpire = undefined;
 await user.save();
 sendToken(user,200,res);
 
-  });
-  exports.getuserdetail =catchAsyncErrors(async(req,res,next)=>{
+});
+exports.getuserdetail =catchAsyncErrors(async(req,res,next)=>{
 
 const user=req.user;
 res.status(200).json({
   success:true,
   user,
 });
-
-  });
-  exports.checkuser = catchAsyncErrors(async (req, res, next) => {
+});
+exports.checkuser = catchAsyncErrors(async (req, res, next) => {
     const { email } = req.body;
   
     try {
@@ -212,9 +203,8 @@ res.status(200).json({
         message: error.message,
       });
     }
-  });
-  
-  exports.updatepassword=catchAsyncErrors(async(req,res,next)=>{
+});
+exports.updatepassword=catchAsyncErrors(async(req,res,next)=>{
     const user= await User.findById(req.user.id).select("+password");
     const isPasswordMatched=await user.comparePassword(req.body.oldpassword);
     if(!isPasswordMatched){
@@ -232,9 +222,8 @@ user,
   });
 
 
-  });
-
-  exports.updateprofile=catchAsyncErrors(async(req,res,next)=>{
+});
+exports.updateprofile=catchAsyncErrors(async(req,res,next)=>{
     const user= await User.findById(req.params.id);
     
     
@@ -249,14 +238,13 @@ user,
   });
 
 
-  });
-  exports.getAllUser= catchAsyncErrors(async (req, res, next) => {
+});
+exports.getAllUser= catchAsyncErrors(async (req, res, next) => {
 const users = await User.find();
 res. status (200). json({
 success: true, users,}
 );
-}) ;
-
+});
 exports.getsingleUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if (!user) {

@@ -10,6 +10,7 @@ app.use(express.json())
 
 const user=require("./routes/userroute");
 const patient=require("./routes/patientroute");
+const doctor=require("./routes/doctorroute");
 app.use(bodyParser.urlencoded({ extended: true })); // To parse URL-encoded data
 app.use(bodyParser.json()); // To parse JSON data
 app.use(cors({
@@ -37,5 +38,6 @@ app.use(session({
 
 app.use("/api/v1",patient);
 app.use("/api/v1",user);
+app.use("/api/v1",doctor);
 app.use(Errormiddleware);
 module.exports=app;
