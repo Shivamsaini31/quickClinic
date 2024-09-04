@@ -37,7 +37,15 @@ const SchedulePage = () => {
     });
   
     // Sort the dates and times
-    const sortedDates = Object.keys(dateGroups).sort(); // Sort dates
+    const sortedDates = Object.keys(dateGroups).sort((a, b) => {
+      const [dayA, monthA, yearA] = a.split(' ');
+      const [dayB, monthB, yearB] = b.split(' ');
+  
+      const dateA = new Date(`${monthA} ${dayA}, ${yearA}`);
+      const dateB = new Date(`${monthB} ${dayB}, ${yearB}`);
+  
+      return dateA - dateB;
+    }); // Sort dates considering day, month, and year
   
     const result = sortedDates.map(date => {
       const times = dateGroups[date];
@@ -50,7 +58,7 @@ const SchedulePage = () => {
     console.log("Processed data:", result); // Log processed data for debugging
     return result;
   }, []); // Add an empty array as dependency to ensure memoization
-
+  
   useEffect(() => {
     const submitSchedule = async () => {
       try {

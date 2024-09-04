@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import "./header.css"; // Import your custom CSS for additional styles
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const PatientHeader = () => {
-  const data=localStorage.getItem('authState');
-  const fetchdata=JSON.parse(data);
+  const [showProfileCard, setShowProfileCard] = useState(false);
+  const data = localStorage.getItem('authState');
+  const fetchdata = JSON.parse(data);
   const id = fetchdata.user._id; // Correctly using useParams to get the id
   const navigate = useNavigate();
+
+  const handleProfileIconClick = () => {
+    setShowProfileCard(prev => !prev);
+  };
+
   return (
     <header className="custom-navbar">
       <div className="container">
@@ -34,8 +41,26 @@ const PatientHeader = () => {
             src="https://via.placeholder.com/40"
             alt="Profile"
             className="profile-img"
+            onClick={handleProfileIconClick}
           />
-          <span className="profile-name">John Doe</span>
+          <span className="profile-name">{fetchdata.user.name}</span>
+          
+          {/* Profile Card */}
+          {showProfileCard && (
+            <motion.div 
+              className="user-info-card"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+               
+              <h6>Name: {fetchdata.user.name}</h6>
+              <h6>Email: {fetchdata.user.email}</h6>
+              <h6>Phone No:{fetchdata.user.phoneNumber}</h6>
+              <button className="update-button">Update Info</button>
+            </motion.div>
+          )}
         </div>
       </div>
     </header>

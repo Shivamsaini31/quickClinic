@@ -1,14 +1,25 @@
 // src/component/doctor/header/DoctorHeader.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import './header.css';
 import { FaUserCircle } from 'react-icons/fa';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 const DoctorHeader = () => {
-  const data=localStorage.getItem('authState');
-  const fetchdata=JSON.parse(data);
-  
+  const [showCard, setShowCard] = useState(false);
+
+  const data = localStorage.getItem('authState');
+  const fetchdata = JSON.parse(data);
   const id = fetchdata.user._id;
-  console.log("id",id);
+
+  const handleIconClick = () => {
+    setShowCard(!showCard);
+  };
+
+  const handleUpdateClick = () => {
+    // Handle the update action (e.g., open a modal or navigate to an update page)
+    console.log("Update button clicked");
+  };
+
   return (
     <header className="doctor-navbar">
       <div className="container">
@@ -25,7 +36,17 @@ const DoctorHeader = () => {
 
         {/* Profile Section */}
         <div className="profile-section">
-          <FaUserCircle className="profile-icon" />
+          <FaUserCircle className="profile-icon" onClick={handleIconClick} />
+          {showCard && (
+            <div className="user-info-card">
+              <h3>User Info</h3>
+             
+              <p>Name: {fetchdata.user.name}</p>
+              <p>Email: {fetchdata.user.email}</p>
+              <p>Phone No:{fetchdata.user.phoneNumber}</p>
+              <button className="update-button" onClick={handleUpdateClick}>Update Info</button>
+            </div>
+          )}
         </div>
       </div>
     </header>
