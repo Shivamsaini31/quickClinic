@@ -4,7 +4,7 @@ const {newappointment,updatepaymentstatus,alldoctors, cancelAppointment, appoint
 router.route("/:id/patient/newappointment").post(newappointment);
 router.route("/:id/patient/create_patient").post(create_patient);
 router.route("/:id/patient/update_payment_status").put(updatepaymentstatus);
-router.route("/:id/patient/all_doctors").get(alldoctors)
+router.route("/:id/patient/all_doctors").get(alldoctors);
 router.route("/:id/patient/cancel_appointment").put(cancelAppointment);
 router.route("/:id/patient/appointment_of_a_period").get(appointment_of_a_period);
 router.route("/:id/patient/change_date").put(change_date_appointment);

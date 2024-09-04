@@ -7,6 +7,7 @@ import PatientHeader from '../component/patient/header/header';
 import AppointmentHistory from '../component/patient/appointmenthistory/appointmenthistory';
 import AppointmentActions from '../component/patient/cancel_and_postpond/cancel_postpond';
 import Updatepatient from '../component/patient/updatepatient/updatepatient'
+import Createpatient from '../component/patient/createpatient/createpatient'
 const PatientRoutes = () => (
   <>
     <PatientHeader /> {/* Display PatientHeader for all patient routes */}
@@ -16,6 +17,7 @@ const PatientRoutes = () => (
       <Route path='/dashboard/:id/history' element={<AppointmentHistory />} />
       <Route path='/dashboard/:id/cancel/postpond' element={<AppointmentActions />} />
       <Route path='/:id/update_patient' element={<Updatepatient/>}/>
+      <Route path='/:id/create_patient' element={<Createpatient/>}/>
    
     </Routes>
   </>

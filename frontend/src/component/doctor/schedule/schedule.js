@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Button, Grid, Typography } from '@mui/material';
 import './schedule.css';
@@ -12,48 +12,7 @@ const SchedulePage = () => {
   const [appointments, setAppointments] = useState([]); // State for appointments
   const { id } = useParams();
 
-  useEffect(() => {
-    if (startDate && endDate) {
-      submitSchedule();
-    }
-  }, [startDate, endDate]); // Trigger submitSchedule whenever startDate or endDate changes
-
-  const calculateDates = (type) => {
-    const now = new Date();
-    const startDateFormatted = now.toISOString().split('T')[0] + 'T' + now.toTimeString().split(' ')[0]; // Add current time to start date
-    setStartDate(startDateFormatted);
-
-    let end;
-    switch (type) {
-      case "Today's":
-        end = new Date();
-        end.setHours(23, 59, 59, 999); // Set to 11:59 PM
-        break;
-      case 'Weekly':
-        end = new Date();
-        end.setDate(end.getDate() + 6); // 6 days later
-        end.setHours(23, 59, 59, 999); // Set to 11:59 PM
-        break;
-      case 'Monthly':
-        end = new Date();
-        end.setDate(end.getDate() + 29); // 29 days later
-        end.setHours(23, 59, 59, 999); // Set to 11:59 PM
-        break;
-      default:
-        return;
-    }
-
-    const endDateFormatted = end.toISOString().split('T')[0] + 'T' + end.toTimeString().split(' ')[0];
-    setEndDate(endDateFormatted);
-    setActiveSchedule(type); // Set the active schedule type
-  };
-
-  const handleScheduleClick = (type) => {
-    calculateDates(type);
-    console.log(`${type} schedule clicked`);
-  };
-
-  const processAppointments = (appointments) => {
+  const processAppointments = useCallback((appointments) => {
     console.log("Raw appointments data:", appointments); // Log raw data for debugging
   
     // Initialize an object to group appointments by date
@@ -90,7 +49,72 @@ const SchedulePage = () => {
   
     console.log("Processed data:", result); // Log processed data for debugging
     return result;
+  }, []); // Add an empty array as dependency to ensure memoization
+
+  useEffect(() => {
+    const submitSchedule = async () => {
+      try {
+        const response = await axios.put(`http://localhost:5000/api/v1/${id}/doctor/specific_appointment`, {
+          params: {
+            startDate,
+            endDate,
+            status: "Scheduled"
+          }
+        });
+
+        const appointmentsData = response.data.appointments;
+        const processedAppointments = processAppointments(appointmentsData);
+
+        // Set processed appointments to state
+        setAppointments(processedAppointments);
+
+        // Print the processed appointments
+        console.log(processedAppointments);
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    };
+
+    if (startDate && endDate) {
+      submitSchedule();
+    }
+  }, [startDate, endDate, id, processAppointments]); // Add processAppointments to dependency array
+
+  const calculateDates = (type) => {
+    const now = new Date();
+    const startDateFormatted = now.toISOString().split('T')[0] + 'T' + now.toTimeString().split(' ')[0]; // Add current time to start date
+    setStartDate(startDateFormatted);
+
+    let end;
+    switch (type) {
+      case "Today's":
+        end = new Date();
+        end.setHours(23, 59, 59, 999); // Set to 11:59 PM
+        break;
+      case 'Weekly':
+        end = new Date();
+        end.setDate(end.getDate() + 6); // 6 days later
+        end.setHours(23, 59, 59, 999); // Set to 11:59 PM
+        break;
+      case 'Monthly':
+        end = new Date();
+        end.setDate(end.getDate() + 29); // 29 days later
+        end.setHours(23, 59, 59, 999); // Set to 11:59 PM
+        break;
+      default:
+        return;
+    }
+
+    const endDateFormatted = end.toISOString().split('T')[0] + 'T' + end.toTimeString().split(' ')[0];
+    setEndDate(endDateFormatted);
+    setActiveSchedule(type); // Set the active schedule type
   };
+
+  const handleScheduleClick = (type) => {
+    calculateDates(type);
+    console.log(`${type} schedule clicked`);
+  };
+
   const formatTime = (time) => {
     if (!time || typeof time !== 'string') {
       return "Invalid Time"; // Handle cases where time is not a string or is empty
@@ -113,32 +137,8 @@ const SchedulePage = () => {
   
     return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
   };
-  
-  const submitSchedule = async () => {
-    try {
-      const response = await axios.put(`http://localhost:5000/api/v1/${id}/doctor/specific_appointment`, {
-        params: {
-          startDate,
-          endDate,
-          status: "Scheduled"
-        }
-      });
-
-      const appointmentsData = response.data.appointments;
-      const processedAppointments = processAppointments(appointmentsData);
-
-      // Set processed appointments to state
-      setAppointments(processedAppointments);
-
-      // Print the processed appointments
-      console.log(processedAppointments);
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-    }
-  };
 
   const isActive = (type) => activeSchedule === type;
-
   return (
     <div className="schedule-page-container">
       <motion.div
@@ -209,24 +209,24 @@ const SchedulePage = () => {
 
       {/* Display processed appointments */}
       <div className="appointment-container">
-      <Typography variant="h5" component="h2" className="appointment-heading">
-        Processed Appointments
-      </Typography>
-      {appointments.map((entry, index) => (
-        <div key={index} className="appointment-list-item">
-          <Typography variant="h6" component="h3" className="appointment-date">
-            {entry.date}
-          </Typography>
-          <ul className="appointment-list">
-            {entry.times.map((time, idx) => (
-              <li key={idx} className="appointment-times">
-                {time}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
+        <Typography variant="h5" component="h2" className="appointment-heading">
+          Processed Appointments
+        </Typography>
+        {appointments.map((entry, index) => (
+          <div key={index} className="appointment-list-item">
+            <Typography variant="h6" component="h3" className="appointment-date">
+              {entry.date}
+            </Typography>
+            <ul className="appointment-list">
+              {entry.times.map((time, idx) => (
+                <li key={idx} className="appointment-times">
+                  {time}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

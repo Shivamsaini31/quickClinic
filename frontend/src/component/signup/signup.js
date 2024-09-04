@@ -18,10 +18,10 @@ const SignupPage = () => {
   const [role, setRole] = useState(''); // State for role selection
   const [phone, setPhone] = useState('');
   const [pincode, setPincode] = useState(''); // State for pincode
-  const [specialty, setSpecialty] = useState(''); // State for specialty
+  // State for specialty
   const [darkMode, setDarkMode] = useState(false);
   const [city, setcity] = useState('');
-
+const [state,setstate]=useState('');
   const navigation = useNavigate();
 
   const onSignup = async (e) => {
@@ -35,8 +35,9 @@ const SignupPage = () => {
         role,
         phoneNumber,
         pincode,
-        city, // Include pincode in the request
-        specialty: role === 'doctor' ? specialty : undefined, // Include specialty if role is doctor
+        city,
+        state // Include pincode in the request
+      
       });
       console.log("data is here", data);
       if (data.success) {
@@ -48,6 +49,7 @@ const SignupPage = () => {
           const id=data2.user._id;
           const role=data2.user.role;
           console.log("Login successful, redirecting to home page...",data2);
+        
           if(role==='patient'){
             navigation(`/patient/dashboard/${id}`);
           }
@@ -136,6 +138,13 @@ const SignupPage = () => {
               className="input-field"
               value={city}
             />
+             <input
+              type="text"
+              onChange={(e) => setstate(e.target.value)}
+              placeholder="State"
+              className="input-field"
+              value={state}
+            />
 
             {/* Role Selection */}
             <div className="role-selection">
@@ -150,25 +159,6 @@ const SignupPage = () => {
                 <option value="doctor">Doctor</option>
               </select>
             </div>
-
-            {/* Specialty Selection for Doctors */}
-            {role === 'doctor' && (
-              <div className="specialty-selection">
-                <label>Select your specialty:</label>
-                <select
-                  className="input-field"
-                  value={specialty}
-                  onChange={(e) => setSpecialty(e.target.value)}
-                >
-                  <option value="">Select Specialty</option>
-                  <option value="cardiologist">Cardiologist</option>
-                  <option value="neurologist">Neurologist</option>
-                  <option value="orthopedic">Orthopedic</option>
-                  {/* Add more specialties as needed */}
-                </select>
-              </div>
-            )}
-
             <div className="remember-me">
               <input type="checkbox" id="remember" />
               <label htmlFor="remember">Remember me</label>

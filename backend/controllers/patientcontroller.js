@@ -230,8 +230,6 @@ console.log("hi");
         appointments: pastAppointments
     });
 });
-
-
 exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params;
     const { startDate, endDate, startTime, endTime,city,specialty,experience,fees,doc_name } = req.body;
@@ -295,7 +293,6 @@ const nameMatches = doc_name ? feesMatches.filter(app => app.doctor.user.name.to
         appointments:nameMatches
     });
 });
-
 exports.appointment_future = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params;
     const currentDate = new Date(); // Current date and time
@@ -329,7 +326,6 @@ exports.appointment_future = catchAsyncErrors(async (req, res, next) => {
         appointments: futureAppointments
     });
 });
-
 exports.create_patient = catchAsyncErrors(async (req, res) => {
     const {  medicalHistory, allergies, currentMedications } = req.body;
 const {id}=req.params;
