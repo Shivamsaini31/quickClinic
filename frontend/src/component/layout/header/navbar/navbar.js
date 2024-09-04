@@ -7,12 +7,21 @@ import { useNavigate } from 'react-router-dom';
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [authState, setAuthState] = useState(false);
+  const [role, setRole] = useState(null); // State to hold user role
   const navigate = useNavigate();
-
-  // Ensure useEffect updates authState based on localStorage
+   const [id,setid]=useState('');
+  // Ensure useEffect updates authState and role based on localStorage
   useEffect(() => {
     const auth = localStorage.getItem('authState');
-    setAuthState(!!auth); // Convert to boolean
+    if (auth) {
+      const parsedAuth = JSON.parse(auth);
+      setAuthState(true);
+      setRole(parsedAuth.user.role);
+      setid(parsedAuth.user._id);
+       // Set role from local storage
+    } else {
+      setAuthState(false);
+    }
   }, []);
 
   const toggleDrawer = () => {
@@ -26,7 +35,16 @@ const SideNavbar = () => {
   const logout = () => {
     localStorage.removeItem('authState');
     setAuthState(false); // Update state
-    navigate('/'); // Navigate to home page after logout
+    setRole(null); // Clear role
+    navigate('/home'); // Navigate to home page after logout
+  };
+
+  const handleUpdate = () => {
+    if (role === 'patient') {
+      navigate(`/patient/${id}/update_patient`); // Navigate to patient data update page
+    } else if (role === 'doctor') {
+      navigate(`/doctor/${id}/update_doctor`); // Navigate to doctor data update page
+    }
   };
 
   return (
@@ -47,6 +65,14 @@ const SideNavbar = () => {
             <ListGroup.Item action href="#about" className="list-item">
               <InfoCircle className="me-2" /> About
             </ListGroup.Item>
+            {/* Conditionally render the update button based on the role */}
+            {authState && (
+              <ListGroup.Item action onClick={handleUpdate} className="list-item">
+                {role === 'patient' ? 'Update Patient Data' : 'Update Doctor Data'}
+              </ListGroup.Item>
+            )}
+            {/* Add additional link if needed */}
+           
           </ListGroup>
           <Button
             variant={authState ? "danger" : "success"}

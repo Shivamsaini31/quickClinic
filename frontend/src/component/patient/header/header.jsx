@@ -5,10 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 const PatientHeader = () => {
   const data=localStorage.getItem('authState');
   const fetchdata=JSON.parse(data);
-  
   const id = fetchdata.user._id; // Correctly using useParams to get the id
   const navigate = useNavigate();
-
   return (
     <header className="custom-navbar">
       <div className="container">

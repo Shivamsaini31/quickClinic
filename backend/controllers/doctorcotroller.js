@@ -3,6 +3,8 @@ const Appointment =require('../models/appointmentmodel');
 const Doctor = require('../models/doctormodel');
 const DoctorSchedule = require('../models/doctorschedulemodel'); // Assuming you have this model
 const User = require('../models/usermodel');
+const Leave =require('../models/leavemodel');
+const Patient =require('../models/patientmodel');
 exports.createDoctor = catchAsyncErrors(async (req, res) => {
     const {  specialization, experience, fees } = req.body;
    const {id}=req.params;
@@ -210,10 +212,19 @@ exports.updatepaymentstatus = catchAsyncErrors(async (req, res, next) => {
        meesage:"succefully updated payment status"
     });
 });
+
 exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params; // Doctor ID
-    const { startDate, endDate, startTime, endTime, city, patientName,status } = req.body;
-
+    console.log('Request body:', req.body);
+    const { startDate, endDate, startTime, endTime, city, patientName, status } = req.body.params;
+     
+    console.log('Received startDate:', id);
+    console.log('Received endDate:', endDate);
+    console.log('Received startTime:', startTime);
+    console.log('Received endTime:', endTime);
+    console.log('Received city:', city);
+    console.log('Received patientName:', patientName);
+    console.log('Received status:', status);
     // Find the doctor
     const doctor = await Doctor.findOne({user:id});
     if (!doctor) {
@@ -224,7 +235,6 @@ exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
    
     const hundredYearsAgo = new Date(now.getFullYear() - 100, now.getMonth(), now.getDate());
     const hundredYearsFromNow = new Date(now.getFullYear() + 100, now.getMonth(), now.getDate());
-
     const effectiveStartDate = startDate ? new Date(startDate) : hundredYearsAgo;
     const effectiveEndDate = endDate ? new Date(endDate) : hundredYearsFromNow;
     const defaultStartTime = startTime || '00:00:00';
@@ -242,9 +252,9 @@ exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
             path: 'user', // Populate User model
             select: 'name email phoneNumber city state' // Select specific fields from User model
         }
-    })
+    });
     
-
+    
     // Filter appointments based on start and end times
     const filteredAppointments = appointments.filter(app => {
         const appointmentDateTime = new Date(app.date);
@@ -259,6 +269,8 @@ exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
     // Filter appointments based on patient name
     const nameMatches = patientName ? cityMatches.filter(app => app.patient.name.toLowerCase().includes(patientName.toLowerCase())) : cityMatches;
     const statusmatches=status? nameMatches.filter(app=>app.status===status):nameMatches;
+
+    
     res.status(200).json({
         success: true,
         appointments: statusmatches

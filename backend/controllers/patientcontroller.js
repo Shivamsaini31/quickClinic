@@ -1,6 +1,6 @@
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const Doctor = require('../models/doctormodel');
-const Patient=require('../models/patientmodel');
+const Patient= require('../models/patientmodel');
 const { v4: uuidv4 } = require('uuid'); // Import the UUID package
 const User = require('../models/usermodel');
 const Appointment =require('../models/appointmentmodel');
@@ -224,12 +224,13 @@ exports.appointment_history_all = catchAsyncErrors(async (req, res, next) => {
 
     // Filter for past appointments
     const pastAppointments = appointments.filter(app => new Date(app.date) <= endDate);
-
+console.log("hi");
     res.status(200).json({
         success: true,
         appointments: pastAppointments
     });
 });
+
 
 exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params;
@@ -261,7 +262,7 @@ exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
         select: 'specialization experience fees', // Select specific fields from Doctor model
         populate: {
             path: 'user', // Populate User model
-            select: 'name city' // Select specific fields from User model
+            select: 'name city email phoneNumber state' // Select specific fields from User model
         }
     });
 

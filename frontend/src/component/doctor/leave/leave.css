@@ -1,0 +1,116 @@
+/* src/components/leavePage.css */
+.leave-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .leave-form {
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 600px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 1rem;
+  }
+  
+  .leave-form:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  .form-input {
+    margin-bottom: 2rem;
+  }
+  
+  .form-input label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333333;
+    font-weight: bold;
+  }
+  
+  .form-input input,
+  .form-input textarea,
+  .form-input select {
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+    margin-top: 0.25rem;
+  }
+  
+  .form-input input:focus,
+  .form-input textarea:focus,
+  .form-input select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+  }
+  
+  .submit-button {
+    display: inline-block;
+    background: #007bff;
+    color: #ffffff;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    text-align: center;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .submit-button:hover {
+    background: #0056b3;
+    transform: translateY(-3px);
+  }
+  
+  .submit-button:active {
+    background: #004494;
+    transform: translateY(1px);
+  }
+  
+  @media (max-width: 768px) {
+    .leave-form {
+      padding: 2.5rem;
+      max-width: 100%;
+      box-shadow: none;
+      border-radius: 0;
+      margin: 0.5rem;
+    }
+  
+    .submit-button {
+      padding: 0.875rem;
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .leave-form {
+    animation: fadeIn 0.6s ease-in-out;
+  }
+  
+  
