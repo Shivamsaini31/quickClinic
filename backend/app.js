@@ -14,7 +14,8 @@ const doctor=require("./routes/doctorroute");
 app.use(bodyParser.urlencoded({ extended: true })); // To parse URL-encoded data
 app.use(bodyParser.json()); // To parse JSON data
 app.use(cors({
-    origin: 'http://localhost:3000', // Frontend URL
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methodss // Frontend URL
     credentials: true,
 }));
 app.use(cookieParser());

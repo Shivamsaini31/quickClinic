@@ -1,6 +1,6 @@
 const express = require('express');
 const router=express.Router();
-const {newappointment,updatepaymentstatus,alldoctors, cancelAppointment, appointment_of_a_period, appointment_history_all, appointment_specific, appointment_future,create_patient, change_date_appointment, specific_doctors, update_patient} = require('../controllers/patientcontroller');
+const {newappointment,updatepaymentstatus,alldoctors, cancelAppointment, appointment_of_a_period, appointment_history_all, appointment_specific, appointment_future,create_patient, change_date_appointment, specific_doctors, update_patient, appointment_bookings} = require('../controllers/patientcontroller');
 router.route("/:id/patient/newappointment").post(newappointment);
 router.route("/:id/patient/create_patient").post(create_patient);
 router.route("/:id/patient/update_payment_status").put(updatepaymentstatus);
@@ -13,4 +13,5 @@ router.route("/:id/patient/specific_appointment").get(appointment_specific);
 router.route("/:id/patient/appointment_future").get(appointment_future);
 router.route("/:id/patient/specific_doctors").get(specific_doctors);
 router.route("/:id/patient/update_patient").put(update_patient);
+router.route("/:id/patient/appointment_bookings").get(appointment_bookings);
 module.exports=router;

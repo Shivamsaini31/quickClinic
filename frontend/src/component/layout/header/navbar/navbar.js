@@ -59,7 +59,7 @@ const SideNavbar = () => {
         </Offcanvas.Header>
         <Offcanvas.Body className="d-flex flex-column">
           <ListGroup variant="flush" className="flex-grow-1">
-            <ListGroup.Item action href="/" className="list-item">
+            <ListGroup.Item action href="/home" className="list-item">
               <House className="me-2" /> Home
             </ListGroup.Item>
             <ListGroup.Item action href="#about" className="list-item">

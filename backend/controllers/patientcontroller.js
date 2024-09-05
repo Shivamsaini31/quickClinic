@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid'); // Import the UUID package
 const User = require('../models/usermodel');
 const Appointment =require('../models/appointmentmodel');
 const DoctorSchedule =require('../models/doctorschedulemodel');
+const moment = require("moment");
 exports.newappointment = catchAsyncErrors(async (req, res) => {
     const { id } = req.params; // Patient ID
     const { doc_id, date, time, paid } = req.body;
@@ -115,10 +116,11 @@ exports.alldoctors = catchAsyncErrors(async (req, res, next) => {
         doctors: alldocs
     });
 });
+
 exports.cancelAppointment = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params; // Patient ID from params
     const { appointmentNumber } = req.body; // Appointment number from body
-
+console.log("appointment NUmber",appointmentNumber);
     // Find the appointment
     const appointment = await Appointment.findOne({ appointmentNumber });
     if (!appointment) {
@@ -144,9 +146,11 @@ exports.cancelAppointment = catchAsyncErrors(async (req, res, next) => {
     // Save the updated schedule
     await schedule.save();
  appointment.status="Canceled";
+ await appointment.save();
     res.status(200).json({
         success: true,
-        message: 'Appointment cancelled successfully'
+        message: 'Appointment cancelled successfully',
+        appointment
     });
 });
 exports.appointment_of_a_period = catchAsyncErrors(async (req, res, next) => {
@@ -310,11 +314,12 @@ exports.appointment_future = catchAsyncErrors(async (req, res, next) => {
     // Retrieve all future appointments for the patient with doctor details populated
     const futureAppointments = await Appointment.find({
         patient: patient._id,
-        date: { $gt: currentDate } // Only future appointments
+        date: { $gt: currentDate }, // Only future appointments
+        status:"Scheduled"
     })
     .populate({
         path: 'doctor', // Field in Appointment model that references the Doctor model
-        select: 'user', // Include only the user field (or other necessary fields) from the Doctor model
+        select: 'user specialization', // Include only the user field (or other necessary fields) from the Doctor model
         populate: {
             path: 'user', // Populate the user field in Doctor model
             select: 'name email phoneNumber city state pincode', // Specify fields to include from the User model
@@ -356,7 +361,7 @@ const {id}=req.params;
 exports.change_date_appointment = catchAsyncErrors(async (req, res) => {
     const { id } = req.params; // Patient ID from params
     const { appointmentNumber, date, time } = req.body;
-
+console.log(appointmentNumber);
     // Find the appointment to be updated
     const appointment = await Appointment.findOne({ appointmentNumber });
     if (!appointment) {
@@ -498,4 +503,101 @@ exports.update_patient = catchAsyncErrors(async (req, res) => {
     });
 });
 
+exports.appointment_bookings = catchAsyncErrors(async (req, res) => {
+    const { doc_id } = req.query;
+console.log(doc_id);
+    // Get doctor schedule
+    const doctorSchedule = await DoctorSchedule.findOne({ doctor: doc_id });
+
+    if (!doctorSchedule) {
+        return res.status(404).json({ message: "Doctor schedule not found." });
+    }
+
+    const availableSlots = [];
+    const now = new Date();
+    const endDate = moment(now).add(30, 'days').toDate();
+
+    // Helper function to generate time slots
+    const generateSlots = (startTime, endTime) => {
+        let slots = [];
+        let currentTime = moment(startTime, "HH:mm");
+        const end = moment(endTime, "HH:mm");
+
+        while (currentTime.isBefore(end)) {
+            slots.push(currentTime.format("HH:mm"));
+            currentTime.add(10, 'minutes');
+        }
+        return slots;
+    };
+
+    // Generate all available slots for the next 30 days
+    for (let day = moment(now); day.isBefore(endDate); day.add(1, 'day')) {
+        const dayOfWeek = day.day(); // Get the day of the week (0 = Sunday, 6 = Saturday)
+
+        let daySchedule;
+        if (dayOfWeek === 0 || dayOfWeek === 6) { // Custom schedules for Sunday and Saturday
+            daySchedule = doctorSchedule.schedule.sunday || doctorSchedule.schedule.saturday;
+        } else {
+            daySchedule = doctorSchedule.schedule;
+        }
+
+        if (!daySchedule) {
+            continue; // Skip if no schedule is found for this day
+        }
+
+        const dateSlots = {
+            date: day.format('YYYY-MM-DD'),
+            slots: []
+        };
+
+        // Generate morning slots if available
+        if (daySchedule.morning) {
+            daySchedule.morning.forEach(morningShift => {
+                const morningSlots = generateSlots(morningShift.startTime, morningShift.endTime);
+                dateSlots.slots.push(...morningSlots);
+            });
+        }
+
+        // Generate evening slots if available
+        if (daySchedule.evening) {
+            daySchedule.evening.forEach(eveningShift => {
+                const eveningSlots = generateSlots(eveningShift.startTime, eveningShift.endTime);
+                dateSlots.slots.push(...eveningSlots);
+            });
+        }
+
+        // Add the available slots for this date to the final result
+        availableSlots.push(dateSlots);
+    }
+
+    // Create a map to hold booked slots by date
+    const bookedSlotsMap = new Map();
+
+    // Iterate over the occupied slots and add them to the map, converting time to 24-hour format
+    doctorSchedule.occupiedSlots.forEach(occupied => {
+        const bookedDate = moment(occupied.date).format('YYYY-MM-DD');
+        const bookedTimes = occupied.timeSlots.map(slot => moment(slot.timeSlot, ["h:mm A"]).format("HH:mm")); // Convert to 24-hour format
+
+        // If the date already exists in the map, append new time slots
+        if (bookedSlotsMap.has(bookedDate)) {
+            bookedSlotsMap.set(bookedDate, [...bookedSlotsMap.get(bookedDate), ...bookedTimes]);
+        } else {
+            // Otherwise, create a new entry in the map
+            bookedSlotsMap.set(bookedDate, bookedTimes);
+        }
+    });
+
+    // Now remove the booked slots from the available slots
+    availableSlots.forEach(availableDay => {
+        const bookedTimesForDate = bookedSlotsMap.get(availableDay.date); // Get the booked times for this date
+
+        if (bookedTimesForDate) {
+            // Remove the booked time slots from the available slots
+            availableDay.slots = availableDay.slots.filter(slot => !bookedTimesForDate.includes(slot));
+        }
+    });
+
+    // Return the final available slots after removing the booked ones
+    return res.status(200).json({ availableSlots });
+});
 
