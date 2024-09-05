@@ -422,7 +422,7 @@ exports.specific_doctors = catchAsyncErrors(async (req, res, next) => {
     const doctors = await Doctor.find()
         .populate({
             path: 'user',
-            select: 'name city state'
+            select: 'name city state email phoneNumber'
         });
 
     // Filter by exact matches
@@ -452,13 +452,13 @@ exports.specific_doctors = catchAsyncErrors(async (req, res, next) => {
     // Apply other filters if provided
     if (experience) {
         filteredDoctors = filteredDoctors.filter(doc => 
-            doc.experience === experience
+            doc.experience >= experience
         );
     }
 
     if (fees) {
         filteredDoctors = filteredDoctors.filter(doc => 
-            doc.fees === fees
+            doc.fees <= fees
         );
     }
 
