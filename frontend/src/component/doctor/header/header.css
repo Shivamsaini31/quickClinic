@@ -171,9 +171,9 @@
   color: #555555;
 }
 
-/* Update Button */
 .update-button {
-  display: block;
+  display: inline-block;
+  text-decoration: none;  /* Remove link underline */
   width: 100%;
   padding: 10px;
   background: linear-gradient(135deg, #4a90e2, #0033cc);
@@ -183,6 +183,7 @@
   font-size: 1rem;
   cursor: pointer;
   margin-top: 10px;
+  text-align: center; /* Center the text inside the link */
   transition: background 0.3s ease, transform 0.3s ease;
 }
 

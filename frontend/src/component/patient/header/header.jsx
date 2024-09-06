@@ -18,7 +18,7 @@ const PatientHeader = () => {
     <header className="custom-navbar">
       <div className="container">
         {/* Logo Section */}
-        <Link className="navbar-brand" to="/home">
+        <Link className="navbar-brand" to="/user/home">
           Quick Clinic
         </Link>
 
@@ -58,7 +58,13 @@ const PatientHeader = () => {
               <h6>Name: {fetchdata.user.name}</h6>
               <h6>Email: {fetchdata.user.email}</h6>
               <h6>Phone No:{fetchdata.user.phoneNumber}</h6>
-              <button className="update-button">Update Info</button>
+              <Link
+      className="update-button"
+      to={`/user/${id}/update`}
+      state={{ from: window.location.pathname }}
+    >
+      Update Info
+    </Link>
             </motion.div>
           )}
         </div>

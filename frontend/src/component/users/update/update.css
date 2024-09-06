@@ -1,0 +1,96 @@
+:root {
+    --input-text-color-light: #333;
+    --input-text-color-dark: #fff;
+  }
+  
+  .update-container {
+    max-width: 500px;
+    margin: auto;
+    background: linear-gradient(135deg, #a2c2e2, #d4a5a5);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: textGlow 1.5s ease-in-out infinite alternate;
+  }
+  
+  .update-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-field {
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    color: var(--input-text-color-light);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .input-field input {
+    color: inherit;
+  }
+  
+  .input-field:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1.02);
+  }
+  
+  .submit-button {
+    background-color: #6a1b9a;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+  }
+  
+  .submit-button:hover {
+    background-color: #4a148c;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes textGlow {
+    0% {
+      text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #6a1b9a, 0 0 20px #6a1b9a, 0 0 25px #6a1b9a, 0 0 30px #6a1b9a, 0 0 35px #6a1b9a;
+    }
+    100% {
+      text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #6a1b9a, 0 0 40px #6a1b9a, 0 0 50px #6a1b9a, 0 0 60px #6a1b9a, 0 0 70px #6a1b9a;
+    }
+  }
+  
+  .dark-mode .input-field {
+    color: var(--input-text-color-dark);
+  }
+  
+  .dark-mode .input-field input {
+    color: inherit;
+  }
+  

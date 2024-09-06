@@ -1,0 +1,114 @@
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    margin-top: 130px;
+    padding: 0;
+  }
+  
+  .earnings-container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+  
+    margin-top: 40px;
+    max-width: 600px;
+    margin: 2rem auto;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .earnings-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .page-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .date-picker-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  .date-picker {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  .submit-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  }
+  
+  .submit-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  .submit-button:active {
+    background-color: #004494;
+  }
+  
+  .submit-button:focus {
+    outline: none;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .earnings-container {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+  
+    .page-title {
+      font-size: 1.5rem;
+    }
+  
+    .submit-button {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .earnings-container {
+      padding: 1rem;
+      margin: 0.5rem;
+    }
+  
+    .page-title {
+      font-size: 1.25rem;
+    }
+  
+    .submit-button {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+  .result-container {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  
+  .result-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4caf50; /* Green color for positive result */
+  }
+  
+  .message-text {
+    text-align: center;
+    color: #f44336; /* Red color for error messages */
+  }

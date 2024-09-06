@@ -15,11 +15,7 @@ const DoctorHeader = () => {
     setShowCard(!showCard);
   };
 
-  const handleUpdateClick = () => {
-    // Handle the update action (e.g., open a modal or navigate to an update page)
-    console.log("Update button clicked");
-  };
-
+ 
   return (
     <header className="doctor-navbar">
       <div className="container">
@@ -30,7 +26,7 @@ const DoctorHeader = () => {
         <nav className="nav-links">
           <Link className="nav-link" to={`/doctor/dashboard/${id}/appointments`}>Appointment History</Link>
           <Link className="nav-link" to={`/doctor/dashboard/${id}/schedule`}>Schedule</Link>
-          <Link className="nav-link" to="/">Earnings</Link>
+          <Link className="nav-link" to={`/doctor/dashboard/${id}/earnings`}>Earnings</Link>
           <Link className="nav-link" to={`/doctor/dashboard/${id}/leave`}>Leave</Link>
         </nav>
 
@@ -44,7 +40,7 @@ const DoctorHeader = () => {
               <p>Name: {fetchdata.user.name}</p>
               <p>Email: {fetchdata.user.email}</p>
               <p>Phone No:{fetchdata.user.phoneNumber}</p>
-              <button className="update-button" onClick={handleUpdateClick}>Update Info</button>
+              <Link className="update-button" to={`user/${id}/update`}>Update Info</Link>
             </div>
           )}
         </div>

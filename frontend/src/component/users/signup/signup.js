@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 import { Google, Brightness4, Brightness7 } from '@mui/icons-material';
 import logo from './logo.svg';
 import signupVisual from './doctor.png'; // Adjust your image path accordingly
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'; // Import the default styles
@@ -15,18 +15,18 @@ const SignupPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State for show/hide password
   const [role, setRole] = useState(''); // State for role selection
   const [phone, setPhone] = useState('');
   const [pincode, setPincode] = useState(''); // State for pincode
-  // State for specialty
   const [darkMode, setDarkMode] = useState(false);
-  const [city, setcity] = useState('');
-const [state,setstate]=useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
   const navigation = useNavigate();
 
   const onSignup = async (e) => {
     e.preventDefault();
-    const phoneNumber=phone;
+    const phoneNumber = phone;
     try {
       const { data } = await axios.post('http://localhost:5000/api/v1/register', {
         name,
@@ -36,29 +36,28 @@ const [state,setstate]=useState('');
         phoneNumber,
         pincode,
         city,
-        state // Include pincode in the request
-      
+        state, // Include pincode in the request
       });
-      console.log("data is here", data);
+      console.log('data is here', data);
       if (data.success) {
-        const data2  = await login(email, password);
-        console.log("login page data is here", data2);
-        
+        const data2 = await login(email, password);
+        console.log('login page data is here', data2);
+
         if (data2.success) {
           // If the login is successful, navigate to the home page
-          const id=data2.user._id;
-          const role=data2.user.role;
-          console.log("Login successful, redirecting to home page...",data2);
-        
-          if(role==='patient'){
+          const id = data2.user._id;
+          const role = data2.user.role;
+          console.log('Login successful, redirecting to home page...', data2);
+
+          if (role === 'patient') {
             navigation(`/patient/dashboard/${id}`);
-          }
-          else {
+          } else {
             navigation(`/doctor/dashboard/${id}`);
           }
-      } else {
-        console.log(data2);
-      }}
+        } else {
+          console.log(data2);
+        }
+      }
     } catch (error) {
       alert(error.response.data.message);
       // Handle signup error (e.g., show an error message)
@@ -107,12 +106,23 @@ const [state,setstate]=useState('');
               value={email}
             />
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'} // Toggle password visibility
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="input-field"
               value={password}
             />
+
+            {/* Show Password Checkbox */}
+            <div className="show-password-checkbox">
+              <input
+                type="checkbox"
+                id="showPassword"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+              />
+              <label htmlFor="showPassword">Show Password</label>
+            </div>
 
             {/* Phone Number Input */}
             <PhoneInput
@@ -131,16 +141,16 @@ const [state,setstate]=useState('');
               className="input-field"
               value={pincode}
             />
-             <input
+            <input
               type="text"
-              onChange={(e) => setcity(e.target.value)}
+              onChange={(e) => setCity(e.target.value)}
               placeholder="City"
               className="input-field"
               value={city}
             />
-             <input
+            <input
               type="text"
-              onChange={(e) => setstate(e.target.value)}
+              onChange={(e) => setState(e.target.value)}
               placeholder="State"
               className="input-field"
               value={state}
@@ -168,7 +178,7 @@ const [state,setstate]=useState('');
             </button>
           </form>
           <p className="login-link">
-            Already have an account? <a href="/login">Login now</a>
+            Already have an account? <a href="/user/login">Login now</a>
           </p>
         </div>
       </div>

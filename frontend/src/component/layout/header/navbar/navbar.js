@@ -29,14 +29,14 @@ const SideNavbar = () => {
   };
 
   const login = () => {
-    navigate('/login'); // Navigate to login page
+    navigate('/user/login'); // Navigate to login page
   };
 
   const logout = () => {
     localStorage.removeItem('authState');
     setAuthState(false); // Update state
     setRole(null); // Clear role
-    navigate('/home'); // Navigate to home page after logout
+    navigate('/user/home'); // Navigate to home page after logout
   };
 
   const handleUpdate = () => {
@@ -59,7 +59,7 @@ const SideNavbar = () => {
         </Offcanvas.Header>
         <Offcanvas.Body className="d-flex flex-column">
           <ListGroup variant="flush" className="flex-grow-1">
-            <ListGroup.Item action href="/home" className="list-item">
+            <ListGroup.Item action href="/user/home" className="list-item">
               <House className="me-2" /> Home
             </ListGroup.Item>
             <ListGroup.Item action href="#about" className="list-item">
