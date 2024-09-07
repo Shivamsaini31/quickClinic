@@ -1,5 +1,5 @@
 const express = require('express');
-const { createSchedule ,createDoctor, updateDoctor, cancel_appointment, appointment_specific, change_date_appointment, applyForLeave} = require('../controllers/doctorcotroller');
+const { createSchedule ,createDoctor, updateDoctor, cancel_appointment, appointment_specific, change_date_appointment, applyForLeave, earnings} = require('../controllers/doctorcotroller');
 const router=express.Router();
 router.route("/:id/doctor/create_schedule").post(createSchedule);
 router.route("/:id/doctor/create_doctor").post(createDoctor);
@@ -8,4 +8,5 @@ router.route("/:id/doctor/cancel_appointment").put(cancel_appointment);
 router.route("/:id/doctor/specific_appointment").put(appointment_specific);
 router.route("/:id/doctor/change_date").put(change_date_appointment);
 router.route("/:id/doctor/leave").post(applyForLeave);
+router.route("/:id/doctor/earnings").get(earnings);
 module.exports=router;

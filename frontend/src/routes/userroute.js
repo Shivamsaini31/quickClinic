@@ -7,7 +7,7 @@ import Forgot from '../component/users/login/forgot';
 import UpdateUserInfo from '../component/users/update/update';
 const UserRoutes = () => (
     
-       
+       <>
       <Routes>
            <Route path='/home' element={<Home />} />
             <Route path='/login' element={<Login />} />
@@ -16,7 +16,7 @@ const UserRoutes = () => (
             <Route path='/:id/update' element={<UpdateUserInfo/>}/>
      
       </Routes>
-    
+    </>
   );
   
   export default UserRoutes;

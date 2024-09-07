@@ -496,3 +496,64 @@ exports.applyForLeave = catchAsyncErrors(async (req, res) => {
         leave
     });
 });
+exports.earnings = catchAsyncErrors(async (req, res) => {
+    const { id } = req.params;
+    const { startDate, endDate } = req.query; // Use req.query for query parameters
+  
+    if (!startDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Start date is required."
+      });
+    }
+  
+    // Parse startDate and endDate
+    const start = new Date(startDate);
+    
+    if (isNaN(start.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid start date format."
+      });
+    }
+    
+    // Set endDate to 100 years after startDate if not provided
+    const end = endDate ? new Date(endDate) : new Date(start.getFullYear() + 100, start.getMonth(), start.getDate());
+  
+    if (isNaN(end.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid end date format."
+      });
+    }
+  
+    // Add time to both dates
+    const startWithTime = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0);
+    const endWithTime = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
+  
+    const doctor = await Doctor.findOne({ user: id });
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found."
+      });
+    }
+  
+    let sum = 0;
+    const appointments = await Appointment.find({
+      doctor: doctor._id,
+      date: { $gte: startWithTime, $lte: endWithTime },
+      status: "Completed"
+    });
+  
+    appointments.forEach(appointment => {
+      sum += appointment.fees;
+    });
+  
+    return res.status(200).json({
+      sum,
+      message: "Successfully fetched earnings.",
+      success: true
+    });
+  });
+  

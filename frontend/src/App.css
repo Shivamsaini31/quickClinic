@@ -1,33 +1,50 @@
+/* Reset margin and padding for all elements */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Main container for the application */
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  min-height: 100vh; /* Ensures the container takes the full viewport height */
+}
+
+/* Header styling */
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  flex-shrink: 0; /* Prevent the header from shrinking */
+  width: 100%; /* Ensure the header takes the full width */
+  text-align: center;
   color: white;
+  font-size: calc(10px + 2vmin); /* Responsive font size */
 }
 
-.App-link {
-  color: #61dafb;
+/* Content area styling */
+.content {
+  flex: 1; /* Fills the remaining space between header and footer */
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  padding: 20px; /* Add some padding to avoid content touching edges */
+  background-color: #f5f5f5; /* Light background for content area */
 }
 
+/* Footer styling */
+footer {
+  background-color: #282c34;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  flex-shrink: 0; /* Ensure the footer stays at the bottom */
+  width: 100%;
+  margin-top: auto; /* Push footer to the bottom */
+}
+
+/* Logo animation (if applicable) */
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -36,20 +53,15 @@
     transform: rotate(360deg);
   }
 }
-/* Apply flexbox to the main container */
-.App {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Ensure the container takes the full viewport height */
+
+/* Optional media query for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
 }
 
-/* Ensure content area takes up remaining space */
-.content {
-  flex: 1; /* Fills the remaining space between header and footer */
+/* Links styling */
+.App-link {
+  color: #61dafb;
 }
-
-/* Style the footer to be at the bottom */
-footer {
-  margin-top: auto; /* Push footer to the bottom */
-}
-
