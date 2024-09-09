@@ -1,30 +1,61 @@
-// socket.js
-const {}=require('./controllers/socketcontrollers');
+const { Server } = require('socket.io');
 
-const socketFunctions = (io) => {
+let io;
+const userSocketMap = {}; // { userId: socketId }
+
+const initializeSocket = (server) => {
+  io = new Server(server, {
+    cors: {
+      origin: ["http://localhost:3000"],
+      methods: ["GET", "POST"],
+    },
+  });
+
   io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    console.log('A user connected:', socket.id);
 
-    // Handle joining a conversation
-    socket.on('joinConversation', (conversationId) => {
-    
+    // Extract userId from the socket's handshake query
+    const userId = socket.handshake.query.userId;
+
+    if (userId && userId !== 'undefined') {
+      // Store the socket ID mapped to the userId
+      userSocketMap[userId] = socket.id;
+    }
+
+    // Emit the list of online users to all clients
+    io.emit('getOnlineUsers', Object.keys(userSocketMap));
+
+    // Handle incoming messages
+    socket.on('sendMessage', (message) => {
+      const receiverSocketId = userSocketMap[message.receiverId];
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit('receiveMessage', message);
+      }
     });
 
-    // Handle sending a message
-    socket.on('sendMessage', async ({ senderId, receiverId, messageText }) => {
-     
-    });
-
-    // Handle fetching older messages
-    socket.on('fetchMessages', async ({ conversationId }) => {
-      
-    });
-
-    // Handle disconnection
+    // Handle socket disconnection
     socket.on('disconnect', () => {
-      console.log(`User disconnected: ${socket.id}`);
+      console.log('User disconnected:', socket.id);
+
+      // Remove the user from the map when disconnected
+      Object.keys(userSocketMap).forEach((key) => {
+        if (userSocketMap[key] === socket.id) {
+          delete userSocketMap[key];
+        }
+      });
+
+      // Emit updated list of online users
+      io.emit('getOnlineUsers', Object.keys(userSocketMap));
     });
   });
 };
 
-module.exports = socketFunctions;
+const getReceiverSocketId = (receiverId) => {
+  return userSocketMap[receiverId];
+};
+
+module.exports = {
+  initializeSocket,
+  getReceiverSocketId,
+  io, // Export the io instance (it will be initialized later)
+};

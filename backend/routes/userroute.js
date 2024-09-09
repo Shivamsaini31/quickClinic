@@ -13,6 +13,7 @@ router.route("/me").get(isauthenticateuser,getuserdetail);
 router.route("/password/update").put(isauthenticateuser,updatepassword);
 router.route("/me/updateprofile").put(isauthenticateuser,updateprofile);
 router.route("/admin/users").get(isauthenticateuser,authorizeroles("admin"),getAllUser);
-router.route("/admin/user/:id").get(isauthenticateuser,authorizeroles("admin"),getsingleUser).delete(isauthenticateuser,deleteUser);
+router.route("/userinfo/:id").get(getsingleUser).delete(isauthenticateuser,deleteUser);
 router.route("/checkuser").post(checkuser);
+
 module.exports = router; 
