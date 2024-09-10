@@ -40,7 +40,7 @@ const DoctorHeader = () => {
               <p>Name: {fetchdata.user.name}</p>
               <p>Email: {fetchdata.user.email}</p>
               <p>Phone No:{fetchdata.user.phoneNumber}</p>
-              <Link className="update-button" to={`user/${id}/update`}>Update Info</Link>
+              <Link className="update-button" to={`/user/${id}/update`}>Update Info</Link>
             </div>
           )}
         </div>

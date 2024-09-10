@@ -36,9 +36,8 @@ exports.createDoctor = catchAsyncErrors(async (req, res) => {
         doctor: newDoctor
     });
 });
-// Function to create a new schedule for a doctor
-exports.createSchedule = catchAsyncErrors(async (req, res) => {
-    const { schedule } = req.body; // Expecting schedule in the format { day, startTime, endTime, interval, capacity }
+exports.updateSchedule = catchAsyncErrors(async (req, res) => {
+    const { schedule, day } = req.body; // Expecting schedule in the format { day, startTime, endTime, interval, capacity }
     const { id } = req.params; // Get doctor ID from URL parameters
 
     // Find the doctor by ID
@@ -48,49 +47,116 @@ exports.createSchedule = catchAsyncErrors(async (req, res) => {
         return res.status(404).json({ success: false, message: "Doctor not found" });
     }
 
-    // Create a new schedule document
-    const newSchedule = new DoctorSchedule({
-        doctor: doctor._id,
-        schedule // This should be an array of daily slots
-    });
+    // Find the existing schedule for the doctor
+    let existingSchedule = await DoctorSchedule.findOne({ doctor: doctor._id });
 
-    // Save the new schedule
-    await newSchedule.save();
+    if (existingSchedule) {
+        // If schedule exists, update it
+        existingSchedule.schedule = existingSchedule.schedule.map((dailySchedule) => {
+            if (dailySchedule.day === day) {
+                return {
+                    ...dailySchedule,
+                    morning: schedule.morning || dailySchedule.morning,
+                    evening: schedule.evening || dailySchedule.evening
+                };
+            }
+            return dailySchedule;
+        });
 
-    res.status(201).json({
-        success: true,
-        message: 'Schedule created successfully',
-        schedule: newSchedule
-    });
+        await existingSchedule.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Schedule updated successfully',
+            schedule: existingSchedule
+        });
+    } else {
+        // If schedule does not exist, create a new one
+        const newSchedule = new DoctorSchedule({
+            doctor: doctor._id,
+            schedule: [{ day, morning: schedule.morning, evening: schedule.evening }]
+        });
+
+        await newSchedule.save();
+
+        res.status(201).json({
+            success: true,
+            message: 'Schedule created successfully',
+            schedule: newSchedule
+        });
+    }
 });
 exports.updateDoctor = catchAsyncErrors(async (req, res) => {
     const { id } = req.params; // User ID from params
     const { specialization, experience, fees } = req.body; // Updated details
 
-    // Find the doctor by user ID
-    const doctor = await Doctor.findOne({ user: id });
-    
-    if (!doctor) {
-        return res.status(404).json({
-            success: false,
-            message: 'Doctor not found'
+    // Check if doctor exists
+    let doctor = await Doctor.findOne({ user: id });
+
+    if (doctor) {
+        // Update existing doctor details
+        if (specialization) doctor.specialization = specialization;
+        if (experience) doctor.experience = experience;
+        if (fees) doctor.fees = fees;
+
+        // Save updated doctor details
+        await doctor.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Doctor details updated successfully',
+            doctor
+        });
+    } else {
+        // Create a new doctor if one does not exist
+        doctor = new Doctor({
+            user: id,
+            specialization: specialization || 'Not specified',
+            experience: experience || 0,
+            fees: fees || 0
+        });
+
+        // Save new doctor details
+        await doctor.save();
+
+        res.status(201).json({
+            success: true,
+            message: 'Doctor created successfully',
+            doctor
         });
     }
-
-    // Update doctor details
-    if (specialization) doctor.specialization = specialization;
-    if (experience) doctor.experience = experience;
-    if (fees) doctor.fees = fees;
-
-    // Save updated doctor details
-    await doctor.save();
-
-    res.status(200).json({
-        success: true,
-        message: 'Doctor details updated successfully',
-        doctor
-    });
 });
+
+exports.schedule_of_day = catchAsyncErrors(async (req, res) => {
+    const { id, day } = req.params; // Get userId and day from URL parameters
+  
+    if (!id || !day) {
+      return res.status(400).json({ success: false, message: "User ID and day parameters are required" });
+    }
+  
+    
+      // Find the user by ID
+   const doctor=await Doctor.findOne({user:id});
+  
+     
+  
+      // Find the doctor's schedule for the given day
+      const schedule = await DoctorSchedule.findOne({
+       doctor:doctor._id,
+        "schedule.day": day
+      });
+      console.log(schedule);
+      if (!schedule) {
+        return res.status(404).json({ success: false, message: "Schedule not found for this doctor and day" });
+      }
+  
+      // Respond with the schedule
+      res.status(200).json({
+        success: true,
+        schedule: schedule.schedule // Assuming schedule is structured to include day-wise slots
+      });
+   
+  });
 exports.cancel_appointment = catchAsyncErrors(async (req, res) => {
     const { id } = req.params;
     const { appointmentNumber, startDate, endDate, startTime, endTime } = req.body;
@@ -212,7 +278,6 @@ exports.updatepaymentstatus = catchAsyncErrors(async (req, res, next) => {
        meesage:"succefully updated payment status"
     });
 });
-
 exports.appointment_specific = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params; // Doctor ID
     console.log('Request body:', req.body);
@@ -447,7 +512,6 @@ exports.getpatients = catchAsyncErrors(async (req, res) => {
         message: 'Please provide at least one search parameter'
     });
 });
-// Function for doctors to apply for leave
 exports.applyForLeave = catchAsyncErrors(async (req, res) => {
     const { id } = req.params; // Doctor ID from URL params
     const { startDate, endDate, reason } = req.body;
@@ -555,5 +619,23 @@ exports.earnings = catchAsyncErrors(async (req, res) => {
       message: "Successfully fetched earnings.",
       success: true
     });
+});
+
+exports.getdoctorinfo = catchAsyncErrors(async (req, res) => {
+    const { id } = req.params;
+  
+    // Validate the ID (you can use a library like mongoose or express-validator for more robust validation)
+  
+  
+    // Find the doctor by ID
+    const doctor = await Doctor.findOne({user:id}).populate('user', 'name'); // Populate user info if needed
+   
+    // Check if doctor exists
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+   
+    // Send the doctor info as response
+    res.status(200).json(doctor);
   });
   

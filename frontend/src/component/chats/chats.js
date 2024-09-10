@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import { Box, Typography, Avatar, IconButton, TextField, List, ListItem, InputAdornment, CircularProgress } from '@mui/material';
 import { Send, ArrowBack, MoreVert, EmojiEmotions } from '@mui/icons-material';
 import { motion } from 'framer-motion';
@@ -34,6 +34,7 @@ const useSocket = (conversationId, id, setMessages) => {
 };
 
 const ChatPage = () => {
+  const navigate = useNavigate();
   const { conversationId } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -136,7 +137,7 @@ const ChatPage = () => {
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 60 }}
       >
-        <IconButton sx={{ color: '#fff' }}>
+        <IconButton sx={{ color: '#fff' }} onClick={() => navigate(`/user/${id}/chats`)}>
           <ArrowBack />
         </IconButton>
         {userInfo && (

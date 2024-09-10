@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Offcanvas, ListGroup } from 'react-bootstrap';
-import { House, InfoCircle, BoxArrowInRight, BoxArrowLeft } from 'react-bootstrap-icons';
+import { House, InfoCircle, BoxArrowInRight, BoxArrowLeft, ChatDots, Calendar } from 'react-bootstrap-icons'; // Import Calendar icon
 import './navbar.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,8 @@ const SideNavbar = () => {
   const [authState, setAuthState] = useState(false);
   const [role, setRole] = useState(null); // State to hold user role
   const navigate = useNavigate();
-   const [id,setid]=useState('');
+  const [id, setId] = useState('');
+
   // Ensure useEffect updates authState and role based on localStorage
   useEffect(() => {
     const auth = localStorage.getItem('authState');
@@ -17,8 +18,7 @@ const SideNavbar = () => {
       const parsedAuth = JSON.parse(auth);
       setAuthState(true);
       setRole(parsedAuth.user.role);
-      setid(parsedAuth.user._id);
-       // Set role from local storage
+      setId(parsedAuth.user._id);
     } else {
       setAuthState(false);
     }
@@ -47,6 +47,16 @@ const SideNavbar = () => {
     }
   };
 
+  const navigateToChats = () => {
+    navigate(`/user/${id}/chats`); // Navigate to chat page
+  };
+
+  const navigateToSchedule = () => {
+    if (role === 'doctor') {
+      navigate(`/doctor/${id}/update_schedule`); // Navigate to schedule management page
+    }
+  };
+
   return (
     <>
       <Button variant="primary" onClick={toggleDrawer} className="menu-button">
@@ -65,15 +75,29 @@ const SideNavbar = () => {
             <ListGroup.Item action href="#about" className="list-item">
               <InfoCircle className="me-2" /> About
             </ListGroup.Item>
+
             {/* Conditionally render the update button based on the role */}
             {authState && (
               <ListGroup.Item action onClick={handleUpdate} className="list-item">
                 {role === 'patient' ? 'Update Patient Data' : 'Update Doctor Data'}
               </ListGroup.Item>
             )}
-            {/* Add additional link if needed */}
-           
+
+            {/* Conditionally render the Chats option if the user is logged in */}
+            {authState && (
+              <ListGroup.Item action onClick={navigateToChats} className="list-item">
+                <ChatDots className="me-2" /> Chats
+              </ListGroup.Item>
+            )}
+
+            {/* Conditionally render the Schedule button based on the role */}
+            {authState && role === 'doctor' && (
+              <ListGroup.Item action onClick={navigateToSchedule} className="list-item">
+                <Calendar className="me-2" /> Schedule
+              </ListGroup.Item>
+            )}
           </ListGroup>
+
           <Button
             variant={authState ? "danger" : "success"}
             onClick={authState ? logout : login}
