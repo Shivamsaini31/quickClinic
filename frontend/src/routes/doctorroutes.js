@@ -5,9 +5,10 @@ import DocDashboard from '../component/doctor/dashboard';
 import DoctorHeader from '../component/doctor/header/header'; 
 import Appointment from '../component/doctor/appointments/appointments';
 import LeavePage from '../component/doctor/leave/leave';
-import Schedule from '../component/doctor/schedule/schedule';
+import Schedule from '../component/doctor/update/schedule';
 import EarningsPage from '../component/doctor/earnings/earnings';
 import DoctorUpdatePage from '../component/doctor/update/update';
+import SchedulePage from '../component/doctor/schedule/schedule';
 // Create DoctorHeader if it doesn't exist
 
 const DoctorRoutes = () => (
@@ -20,6 +21,7 @@ const DoctorRoutes = () => (
       <Route path='/:id/update_schedule' element={<Schedule/>}/>
       <Route path='/dashboard/:id/earnings' element={<EarningsPage/>} />
       <Route path='/:id/update_doctor' element={<DoctorUpdatePage/>}/>
+<Route path='dashboard/:id/schedule' element={<SchedulePage/>}/>
       {/* Add additional routes here as needed */}
     </Routes>
   </>

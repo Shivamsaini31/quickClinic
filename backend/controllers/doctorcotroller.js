@@ -37,7 +37,7 @@ exports.createDoctor = catchAsyncErrors(async (req, res) => {
     });
 });
 exports.updateSchedule = catchAsyncErrors(async (req, res) => {
-    const { schedule, day } = req.body; // Expecting schedule in the format { day, startTime, endTime, interval, capacity }
+    const { morning, evening } = req.body; // Expecting schedule in the format { morning: [slots], evening: [slots] }
     const { id } = req.params; // Get doctor ID from URL parameters
 
     // Find the doctor by ID
@@ -52,16 +52,10 @@ exports.updateSchedule = catchAsyncErrors(async (req, res) => {
 
     if (existingSchedule) {
         // If schedule exists, update it
-        existingSchedule.schedule = existingSchedule.schedule.map((dailySchedule) => {
-            if (dailySchedule.day === day) {
-                return {
-                    ...dailySchedule,
-                    morning: schedule.morning || dailySchedule.morning,
-                    evening: schedule.evening || dailySchedule.evening
-                };
-            }
-            return dailySchedule;
-        });
+        existingSchedule.schedule = {
+            morning: morning || existingSchedule.schedule.morning,
+            evening: evening || existingSchedule.schedule.evening
+        };
 
         await existingSchedule.save();
 
@@ -74,7 +68,10 @@ exports.updateSchedule = catchAsyncErrors(async (req, res) => {
         // If schedule does not exist, create a new one
         const newSchedule = new DoctorSchedule({
             doctor: doctor._id,
-            schedule: [{ day, morning: schedule.morning, evening: schedule.evening }]
+            schedule: {
+                morning: morning || [],
+                evening: evening || []
+            }
         });
 
         await newSchedule.save();
@@ -86,6 +83,7 @@ exports.updateSchedule = catchAsyncErrors(async (req, res) => {
         });
     }
 });
+
 exports.updateDoctor = catchAsyncErrors(async (req, res) => {
     const { id } = req.params; // User ID from params
     const { specialization, experience, fees } = req.body; // Updated details
@@ -126,37 +124,39 @@ exports.updateDoctor = catchAsyncErrors(async (req, res) => {
         });
     }
 });
-
 exports.schedule_of_day = catchAsyncErrors(async (req, res) => {
-    const { id, day } = req.params; // Get userId and day from URL parameters
+    const { id } = req.params; // Get userId from URL parameters
   
-    if (!id || !day) {
-      return res.status(400).json({ success: false, message: "User ID and day parameters are required" });
+    if (!id) {
+      return res.status(400).json({ success: false, message: "User ID parameter is required" });
     }
   
+    // Find the doctor by user ID
+    const doctor = await Doctor.findOne({ user: id });
     
-      // Find the user by ID
-   const doctor=await Doctor.findOne({user:id});
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
   
-     
+    // Find the doctor's schedule
+    const schedule = await DoctorSchedule.findOne({ doctor: doctor._id });
+    
+    if (!schedule) {
+      return res.status(404).json({ success: false, message: "Schedule not found for this doctor" });
+    }
   
-      // Find the doctor's schedule for the given day
-      const schedule = await DoctorSchedule.findOne({
-       doctor:doctor._id,
-        "schedule.day": day
-      });
-      console.log(schedule);
-      if (!schedule) {
-        return res.status(404).json({ success: false, message: "Schedule not found for this doctor and day" });
+    // Respond with the schedule
+    res.status(200).json({
+      success: true,
+      schedule: {
+        morning: schedule.schedule.morning,
+        evening: schedule.schedule.evening,
+        // Assuming schedule has uniform slots for weekdays, adjust as needed
+        // Optional: Handling off days if needed
       }
-  
-      // Respond with the schedule
-      res.status(200).json({
-        success: true,
-        schedule: schedule.schedule // Assuming schedule is structured to include day-wise slots
-      });
-   
+    });
   });
+  
 exports.cancel_appointment = catchAsyncErrors(async (req, res) => {
     const { id } = req.params;
     const { appointmentNumber, startDate, endDate, startTime, endTime } = req.body;
