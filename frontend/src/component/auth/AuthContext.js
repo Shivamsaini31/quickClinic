@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const { data } = await axios.post('http://localhost:5000/api/v1/login', { email, password });
+            const { data } = await axios.post('/api/v1/login', { email, password });
             if (data) {
                 const newAuthState = {
                     success: true,
