@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Offcanvas, ListGroup } from 'react-bootstrap';
-import { House, InfoCircle, BoxArrowInRight, BoxArrowLeft, ChatDots, Calendar } from 'react-bootstrap-icons'; // Import Calendar icon
+import { House, InfoCircle, BoxArrowInRight, BoxArrowLeft, ChatDots, Calendar } from 'react-bootstrap-icons';
 import './navbar.css';
 import { useNavigate } from 'react-router-dom';
 
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [authState, setAuthState] = useState(false);
-  const [role, setRole] = useState(null); // State to hold user role
+  const [role, setRole] = useState(null);
   const navigate = useNavigate();
   const [id, setId] = useState('');
 
-  // Ensure useEffect updates authState and role based on localStorage
   useEffect(() => {
     const auth = localStorage.getItem('authState');
     if (auth) {
@@ -29,32 +28,36 @@ const SideNavbar = () => {
   };
 
   const login = () => {
-    navigate('/user/login'); // Navigate to login page
+    navigate('/user/login');
   };
 
   const logout = () => {
     localStorage.removeItem('authState');
-    setAuthState(false); // Update state
-    setRole(null); // Clear role
-    navigate('/user/home'); // Navigate to home page after logout
+    setAuthState(false);
+    setRole(null);
+    navigate('/user/home');
   };
 
   const handleUpdate = () => {
     if (role === 'patient') {
-      navigate(`/patient/${id}/update_patient`); // Navigate to patient data update page
+      navigate(`/patient/${id}/update_patient`);
     } else if (role === 'doctor') {
-      navigate(`/doctor/${id}/update_doctor`); // Navigate to doctor data update page
+      navigate(`/doctor/${id}/update_doctor`);
     }
   };
 
   const navigateToChats = () => {
-    navigate(`/user/${id}/chats`); // Navigate to chat page
+    navigate(`/user/${id}/chats`);
   };
 
   const navigateToSchedule = () => {
     if (role === 'doctor') {
-      navigate(`/doctor/${id}/update_schedule`); // Navigate to schedule management page
+      navigate(`/doctor/${id}/update_schedule`);
     }
+  };
+
+  const navigateToAbout = () => {
+    navigate('/user/about'); // Navigate to the about page
   };
 
   return (
@@ -72,25 +75,22 @@ const SideNavbar = () => {
             <ListGroup.Item action href="/user/home" className="list-item">
               <House className="me-2" /> Home
             </ListGroup.Item>
-            <ListGroup.Item action href="#about" className="list-item">
+            <ListGroup.Item action onClick={navigateToAbout} className="list-item">
               <InfoCircle className="me-2" /> About
             </ListGroup.Item>
 
-            {/* Conditionally render the update button based on the role */}
             {authState && (
               <ListGroup.Item action onClick={handleUpdate} className="list-item">
                 {role === 'patient' ? 'Update Patient Data' : 'Update Doctor Data'}
               </ListGroup.Item>
             )}
 
-            {/* Conditionally render the Chats option if the user is logged in */}
             {authState && (
               <ListGroup.Item action onClick={navigateToChats} className="list-item">
                 <ChatDots className="me-2" /> Chats
               </ListGroup.Item>
             )}
 
-            {/* Conditionally render the Schedule button based on the role */}
             {authState && role === 'doctor' && (
               <ListGroup.Item action onClick={navigateToSchedule} className="list-item">
                 <Calendar className="me-2" /> Schedule
@@ -99,7 +99,7 @@ const SideNavbar = () => {
           </ListGroup>
 
           <Button
-            variant={authState ? "danger" : "success"}
+            variant={authState ? 'danger' : 'success'}
             onClick={authState ? logout : login}
             className="auth-button mt-3"
           >

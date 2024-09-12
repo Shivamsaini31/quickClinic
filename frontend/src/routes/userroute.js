@@ -7,6 +7,7 @@ import Forgot from '../component/users/login/forgot';
 import UpdateUserInfo from '../component/users/update/update';
 import ChatViewPage from '../component/chats/chatview';
 import ChatPage from '../component/chats/chats';
+import About from '../component/users/about/about'
 const UserRoutes = () => (
     
        <>
@@ -18,6 +19,7 @@ const UserRoutes = () => (
             <Route path='/:id/update' element={<UpdateUserInfo/>}/>
             <Route path='/:id/chats' element={<ChatViewPage/>}/>
             <Route path='/chats/:conversationId' element={<ChatPage/>} />
+            <Route path='/about' element={<About/>}/>
       </Routes>
     </>
   );
