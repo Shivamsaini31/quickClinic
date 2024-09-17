@@ -11,6 +11,7 @@ import PatientRoutes from './routes/pateintroutes';
 import DoctorRoutes from './routes/doctorroutes';
 import UserRoutes from './routes/userroute';
 import { SocketProvider } from './component/chats/socketcontext';
+import './tailwind.css';
 
 function App() {
   return (

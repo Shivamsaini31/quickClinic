@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
@@ -46,15 +46,16 @@ app.use(
 );
 
 // Define your routes
-const user = require('./routes/userroute');
-const patient = require('./routes/patientroute');
-const doctor = require('./routes/doctorroute');
-const message = require('./routes/messageroute'); // Add message route
-
+const user = require('./routes/user.routes');
+const patient = require('./routes/patient.routes');
+const doctor = require('./routes/doctor.routes');
+const message = require('./routes/message.routes'); // Add message route
+const notification=require('./routes/notification.routes');
 app.use('/api/v1', patient);
 app.use('/api/v1', user);
 app.use('/api/v1', doctor);
-app.use('/api/v1', message); // Use message route
+app.use('/api/v1', message);
+app.use('/api/v1',notification); // Use message route
 
 // Error handling middleware
 app.use(Errormiddleware);

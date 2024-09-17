@@ -6,7 +6,7 @@ const userSocketMap = {}; // { userId: socketId }
 const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: ["http://localhost:3000"],
+      origin: '*',
       methods: ["GET", "POST"],
     },
   });
@@ -20,16 +20,24 @@ const initializeSocket = (server) => {
     if (userId && userId !== 'undefined') {
       // Store the socket ID mapped to the userId
       userSocketMap[userId] = socket.id;
-    }
 
-    // Emit the list of online users to all clients
-    io.emit('getOnlineUsers', Object.keys(userSocketMap));
+      // Emit the list of online users to all clients
+      io.emit('getOnlineUsers', Object.keys(userSocketMap));
+    }
 
     // Handle incoming messages
     socket.on('sendMessage', (message) => {
       const receiverSocketId = userSocketMap[message.receiverId];
       if (receiverSocketId) {
         io.to(receiverSocketId).emit('receiveMessage', message);
+      }
+    });
+
+    // Handle incoming notifications
+    socket.on('sendNotification', (notification) => {
+      const receiverSocketId = userSocketMap[notification.userId];
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit('receiveNotification', notification);
       }
     });
 
