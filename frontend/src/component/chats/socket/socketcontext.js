@@ -5,7 +5,7 @@ const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-
+const [OnlineUsers,setOnlineUsers]=useState('');
   useEffect(() => {
     const authState = JSON.parse(localStorage.getItem('authState'));
     const userId = authState?.user?._id; // Get userId from localStorage or any other source
@@ -27,7 +27,9 @@ export const SocketProvider = ({ children }) => {
       newSocket.on('connect_error', (err) => {
         console.error('Socket connection error:', err);
       });
-
+      newSocket.on("getOnlineUsers", (users) => {
+				setOnlineUsers(users);
+			});
       return () => {
         console.log('Disconnecting from socket server');
         newSocket.disconnect();

@@ -1,113 +1,99 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useParams,useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Avatar, IconButton, TextField, List, ListItem, InputAdornment, CircularProgress } from '@mui/material';
 import { Send, ArrowBack, MoreVert, EmojiEmotions } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import axios from 'axios';
-import io from 'socket.io-client';
+import { useSocket } from '../socket/socketcontext'; // Import useSocket hook
 
-const useSocket = (conversationId, id, setMessages) => {
-  const socket = useRef(null);
-
-  useEffect(() => {
-    socket.current = io('http://localhost:5000');
-
-    socket.current.on('receiveMessage', (message) => {
-      setMessages(prevMessages => [message, ...prevMessages]);
-    });
-
-    return () => {
-      socket.current.disconnect();
-    };
-  }, [conversationId, id, setMessages]);
-
-  const sendMessage = useCallback((message, receiverId) => {
-    socket.current.emit('sendMessage', {
-      message,
-      receiverId,
-      sender: id,
-      createdAt: new Date(),
-    });
-  }, [id]);
-
-  return { sendMessage };
-};
+import { getReceiverId } from './reciever'; // Import receiver ID function
+import { sendMessage } from './sendmessage'; // Import the sendMessage function
+import { fetchMessages } from './fetchmessages'; // Import the fetchMessages function
 
 const ChatPage = () => {
   const navigate = useNavigate();
   const { conversationId } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState(null); // Store user information
   const [loading, setLoading] = useState(true);
-  const [receiverId, setReceiverId] = useState('');
+  const [receiverId, setReceiverId] = useState(null); // Store receiverId
   const chatContainerRef = useRef(null);
   const id = JSON.parse(localStorage.getItem('authState'))?.user?._id;
+  
+  const socket = useSocket(); // Use the provided socket from context
 
-  const { sendMessage } = useSocket(conversationId, id, setMessages);
-
+  // Fetch the receiver's ID
   useEffect(() => {
     const fetchReceiverId = async () => {
-      try {
-        const { data } = await axios.get(`http://localhost:5000/api/v1/recieverId/${conversationId}`);
-        const participants = data.participantIds;
-        setReceiverId(participants.find(participant => participant !== id));
-      } catch (error) {
-        console.error('Error fetching receiver ID:', error.message);
+      const response = await getReceiverId(conversationId, id);
+      if (response.success) {
+        setReceiverId(response.receiverId._id);
+        setUserInfo(response.receiverId);
       }
     };
-
     if (id) fetchReceiverId();
   }, [conversationId, id]);
 
-  const fetchMessages = useCallback(async () => {
+  // Fetch messages for the conversation
+  const handleFetchMessages = useCallback(async () => {
     setLoading(true);
-    try {
-      const messagesResponse = await axios.get(`http://localhost:5000/api/v1/getmessages/${conversationId}`);
-      setMessages(messagesResponse.data);
-
-      if (receiverId) {
-        const userResponse = await axios.get(`http://localhost:5000/api/v1/userinfo/${receiverId}`);
-        setUserInfo(userResponse.data.user);
-        
-
-      }
-      
-    } catch (error) {
-      console.error('Error fetching messages:', error.message);
-    } finally {
-      setLoading(false);
+    const response = await fetchMessages(conversationId);
+    if (response.success) {
+      setMessages(response.messages);
     }
-  }, [conversationId, receiverId]);
+    setLoading(false);
+  }, [conversationId]);
 
   useEffect(() => {
-    if (conversationId && receiverId) fetchMessages();
-  }, [conversationId, receiverId, fetchMessages]);
+    handleFetchMessages();
+  }, [handleFetchMessages]);
 
+  // Socket.IO - Listen for new messages
+  useEffect(() => {
+    if (socket && conversationId) {
+      socket.emit('joinChat', conversationId); // Join the chat room based on the conversationId
+
+      // Listen for incoming messages
+      socket.on('receiveMessage', (message) => {
+        setMessages((prevMessages) => [...prevMessages, message]); // Add the new message to the state
+      });
+
+      return () => {
+        socket.emit('leaveChat', conversationId); // Leave the chat room when component unmounts
+        socket.off('receiveMessage'); // Clean up the event listener
+      };
+    }
+  }, [socket, conversationId]);
+
+  // Handle sending the message to the backend
+  const handleSendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    const response = await sendMessage(id, receiverId, newMessage);
+    if (response.success) {
+      // Send the message via Socket.IO to other participants
+      const messageData = {
+        senderId: id,
+        receiverId: receiverId,
+        message: newMessage,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Emit the message via Socket.IO
+      socket.emit('sendMessage', messageData);
+
+      // Add the message locally
+      setMessages((prevMessages) => [messageData,...prevMessages]);
+      setNewMessage(''); // Clear the input
+    }
+  };
+
+  // Scroll to the bottom of the chat when new messages arrive
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
-
-  const handleSendMessage = async () => {
-    if (!newMessage.trim()) return;
-
-    try {
-      await axios.post(`http://localhost:5000/api/v1/sendmessage/${id}`, {
-        message: newMessage,
-        receiverId,
-      });
-
-      sendMessage(newMessage, receiverId);
-
-      setNewMessage('');
-      fetchMessages();
-
-    } catch (error) {
-      console.error('Error sending message:', error.message);
-    }
-  };
 
   return (
     <Box
@@ -115,7 +101,7 @@ const ChatPage = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        backgroundColor: '#fafafa',
+        backgroundColor: '#f0f4f8',
       }}
       component={motion.div}
       initial={{ opacity: 0 }}
@@ -128,7 +114,7 @@ const ChatPage = () => {
           display: 'flex',
           alignItems: 'center',
           padding: 2,
-          backgroundColor: '#2e7d32',
+          backgroundColor: '#1976d2',
           color: '#fff',
           boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
         }}
@@ -144,9 +130,10 @@ const ChatPage = () => {
           <Avatar
             src={userInfo.avatarUrl || 'https://via.placeholder.com/50'}
             sx={{ marginLeft: 2, marginRight: 2 }}
+            className="animate-pulse"
           />
         )}
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" sx={{ flexGrow: 1 }} className="text-lg font-bold">
           {userInfo?.name || 'Chat'}
         </Typography>
         <IconButton sx={{ color: '#fff' }}>
@@ -161,7 +148,7 @@ const ChatPage = () => {
           flexGrow: 1,
           overflowY: 'auto',
           padding: 2,
-          backgroundColor: '#e8f5e9',
+          backgroundColor: '#f0f4f8',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -170,7 +157,9 @@ const ChatPage = () => {
           <CircularProgress sx={{ alignSelf: 'center', marginTop: 5 }} />
         ) : (
           <List sx={{ display: 'flex', flexDirection: 'column-reverse' }}>
-            {messages.map((message, index) => (
+            {messages
+                
+              .map((message, index) => (
               <ListItem
                 key={index}
                 sx={{
@@ -185,7 +174,7 @@ const ChatPage = () => {
               >
                 <Box
                   sx={{
-                    backgroundColor: message.senderId === id ? '#4caf50' : '#fff',
+                    backgroundColor: message.senderId === id ? '#42a5f5' : '#fff',
                     color: message.senderId === id ? '#fff' : '#000',
                     borderRadius: '10px',
                     padding: 1.5,
@@ -193,6 +182,7 @@ const ChatPage = () => {
                     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
                     display: 'flex',
                     flexDirection: 'column',
+                    className: 'transition-transform transform hover:scale-105',
                   }}
                 >
                   <Typography variant="body1">{message.message}</Typography>
@@ -226,16 +216,17 @@ const ChatPage = () => {
           onChange={(e) => setNewMessage(e.target.value)}
           variant="outlined"
           placeholder="Type your message..."
+          className="input input-bordered input-primary"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <EmojiEmotions />
+                <EmojiEmotions className="text-yellow-400" />
               </InputAdornment>
             ),
           }}
         />
-        <IconButton color="primary" onClick={handleSendMessage}>
-          <Send />
+        <IconButton color="primary" onClick={handleSendMessage} className="btn btn-primary ml-2">
+          <Send className="text-blue" />
         </IconButton>
       </Box>
     </Box>

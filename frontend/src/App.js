@@ -10,7 +10,7 @@ import { AuthProvider } from './component/auth/AuthContext';
 import PatientRoutes from './routes/pateintroutes';
 import DoctorRoutes from './routes/doctorroutes';
 import UserRoutes from './routes/userroute';
-import { SocketProvider } from './component/chats/socketcontext';
+import { SocketProvider } from './component/chats/socket/socketcontext';
 import './tailwind.css';
 
 function App() {

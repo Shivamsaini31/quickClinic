@@ -11,10 +11,6 @@ dotenv.config({ path: 'backend/config/config.env' });
 // Connect to the database
 connect_Database();
 
-app.use(express.static(path.join(__dirname, '../frontend/build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build' ,'index.html'));
-});
 
 // Create the HTTP server
 const server = http.createServer(app);

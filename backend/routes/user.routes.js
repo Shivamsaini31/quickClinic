@@ -15,5 +15,5 @@ router.route("/me/updateprofile").put(isauthenticateuser,updateprofile);
 router.route("/admin/users").get(isauthenticateuser,authorizeroles("admin"),getAllUser);
 router.route("/userinfo/:id").get(getsingleUser).delete(isauthenticateuser,deleteUser);
 router.route("/checkuser").post(checkuser);
-
+router.route("/users").get(getAllUser);
 module.exports = router; 

@@ -14,8 +14,13 @@ const conversationSchema = new mongoose.Schema(
 				ref: 'Message',
 				default: [],
 			},
-		],
+		],lastMessage: {
+			type: String,
+			
+			default: null, // Default to null if there's no last message yet
+		  },
 	},
+	
 	{ timestamps: true }
 );
 

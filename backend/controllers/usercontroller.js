@@ -242,11 +242,11 @@ user,
 exports.getAllUser= catchAsyncErrors(async (req, res, next) => {
 const users = await User.find();
 res. status (200). json({
-success: true, users,}
+success: true, users}
 );
 });
 exports.getsingleUser = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.find({_id:req.params.id});
   if (!user) {
   return next (new ErrorHander (`User does not exist with Id: ${req-params.id}`))
 }

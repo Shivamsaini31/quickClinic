@@ -6,7 +6,7 @@ import Signup from '../component/users/signup/signup';
 import Forgot from '../component/users/login/forgot';
 import UpdateUserInfo from '../component/users/update/update';
 import ChatViewPage from '../component/chats/chatview';
-import ChatPage from '../component/chats/chats';
+import ChatPage from '../component/chats/messages/chats';
 import About from '../component/users/about/about'
 const UserRoutes = () => (
     

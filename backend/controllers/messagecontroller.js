@@ -1,5 +1,6 @@
 const Conversation = require('../models/conversationmodel.js');
 const Message = require('../models/messagemodel.js');
+const User=require('../models/usermodel.js');
 const { getReceiverSocketId, io } = require('../socket.js');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 exports.sendMessage = async (req, res) => {
@@ -27,6 +28,7 @@ exports.sendMessage = async (req, res) => {
 
     if (newMessage) {
       conversation.messages.push(newMessage._id);
+      conversation.lastMessage=newMessage.message;
     }
 
     // Save both conversation and message in parallel
@@ -35,7 +37,7 @@ exports.sendMessage = async (req, res) => {
     // Emit the message to the receiver via Socket.io
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit('newMessage', newMessage);
+      io.to(receiverSocketId).emit('receiveMessage', newMessage);
     }
 
     res.status(201).json(newMessage);
@@ -62,10 +64,6 @@ exports.getMessages = catchAsyncErrors(async (req, res) => {
   // Send sorted messages as response
   res.status(200).json(conversation.messages);
 });
-
-
-
-
 exports.getconversations = catchAsyncErrors(async (req, res) => {
   const { id } = req.params; // The ID of the requesting user
 
@@ -85,6 +83,7 @@ exports.getconversations = catchAsyncErrors(async (req, res) => {
       conversationId: conversation._id,
       otherParticipantId: otherParticipant._id,
       otherParticipantName: otherParticipant.name,
+      lastMessage:conversation.lastMessage
     };
   });
 
@@ -129,7 +128,7 @@ exports.groupids = catchAsyncErrors(async (req, res) => {
   const { conversationId } = req.params;
 
   // Find the conversation by its ID
-  const conversation = await Conversation.findById({_id:conversationId});
+  const conversation = await Conversation.findById(conversationId);
 
   // Check if the conversation exists
   if (!conversation) {
@@ -139,9 +138,17 @@ exports.groupids = catchAsyncErrors(async (req, res) => {
     });
   }
 
-  // Send the array of participant IDs
+  // Get the participant IDs
+  const participantIds = conversation.participants;
+
+  // Fetch the detailed information for each participant
+  const participantsInfo = await User.find({ _id: { $in: participantIds } })
+    .select('_id name email'); // Select only necessary fields (adjust as needed)
+
+  // Send the array of participant details
   res.status(200).json({
     success: true,
-    participantIds: conversation.participants,
+    participants: participantsInfo,
   });
 });
+
