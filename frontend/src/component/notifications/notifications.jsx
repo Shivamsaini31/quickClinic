@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { Notifications as NotificationsIcon, Delete as DeleteIcon, Inbox as InboxIcon } from '@mui/icons-material';
 import axios from 'axios';
+import { api } from '../../utils/api';
 
 const NotificationsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,21 +15,22 @@ const NotificationsDropdown = () => {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const response = await axios.get(`/api/v1/notifications/${id}`);
-      if (Array.isArray(response.data)) {
-        setNotifications(response.data);
+      const response = await axios.get(api.getUrl(`notifications/${id}`));
+      if (response.data.success && Array.isArray(response.data.notifications)) {
+        setNotifications(response.data.notifications);
       } else {
-        console.error('Fetched data is not an array');
+        console.error('Fetched data is not an array or request failed');
         setNotifications([]);
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
+      setNotifications([]);
     }
   }, [id]); // Dependency on id to ensure it's updated when user changes
 
   const markAllAsRead = async () => {
     try {
-      await axios.post(`/api/v1/marknotifications/${id}`);
+      await axios.put(api.getUrl(`notifications/${id}/mark-read`));
       fetchNotifications(); // Refresh notifications after marking them as read
     } catch (error) {
       console.error('Error marking notifications as read:', error);
@@ -37,7 +39,7 @@ const NotificationsDropdown = () => {
 
   const handleDelete = async (notificationId) => {
     try {
-      await axios.delete(`/api/v1/notifications/${notificationId}`);
+      await axios.delete(api.getUrl(`notification/${notificationId}`));
       fetchNotifications(); // Refresh notifications after deleting
     } catch (error) {
       console.error('Error deleting notification:', error);
@@ -72,14 +74,14 @@ const NotificationsDropdown = () => {
             {notifications.length > 0 ? (
               notifications.slice(0, 5).map((notification) => (
                 <div
-                  key={notification.id}
+                  key={notification._id}
                   className={`flex items-center p-4 border-b ${notification.read ? 'bg-gray-200 text-gray-500' : 'bg-white text-black'}`}
                 >
                   <div className="flex-1">
                     <p className="text-sm">{notification.content}</p>
                   </div>
                   <button
-                    onClick={() => handleDelete(notification.id)}
+                    onClick={() => handleDelete(notification._id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     <DeleteIcon />
