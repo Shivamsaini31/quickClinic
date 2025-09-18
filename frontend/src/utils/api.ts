@@ -1,8 +1,16 @@
 // API configuration utility
-console.log('Environment variables:', process.env);
-console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
-console.log('Final API_BASE_URL:', API_BASE_URL);
+const getApiBaseUrl = () => {
+  // Check if we're running on Vercel
+  if (process.env.NODE_ENV === 'production' && process.env.VERCEL) {
+    // On Vercel, use the current domain for API calls
+    return `${window.location.origin}/api/v1`;
+  }
+  
+  // For local development, use localhost
+  return process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const api = {
   baseURL: API_BASE_URL,
