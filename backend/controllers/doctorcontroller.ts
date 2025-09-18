@@ -435,12 +435,12 @@ export const getpatients = catchAsyncErrors(async (req: Request, res: Response) 
     return res.status(200).json({
       success: true,
       patient: {
-        name: appointment.patient.user.name,
-        email: appointment.patient.user.email,
-        phone: appointment.patient.user.phone,
-        medicalHistory: appointment.patient.medicalHistory,
-        allergies: appointment.patient.allergies,
-        currentMedications: appointment.patient.currentMedications,
+        name: (appointment.patient as any).user.name,
+        email: (appointment.patient as any).user.email,
+        phone: (appointment.patient as any).user.phoneNumber,
+        medicalHistory: (appointment.patient as any).medicalHistory,
+        allergies: (appointment.patient as any).allergies,
+        currentMedications: (appointment.patient as any).currentMedications,
       }
     });
   }
@@ -460,9 +460,9 @@ export const getpatients = catchAsyncErrors(async (req: Request, res: Response) 
     return res.status(200).json({
       success: true,
       patient: {
-        name: patient.user.name,
-        email: patient.user.email,
-        phone: patient.user.phone,
+        name: (patient.user as any).name,
+        email: (patient.user as any).email,
+        phone: (patient.user as any).phoneNumber,
         medicalHistory: patient.medicalHistory,
         allergies: patient.allergies,
         currentMedications: patient.currentMedications,
@@ -485,9 +485,9 @@ export const getpatients = catchAsyncErrors(async (req: Request, res: Response) 
     return res.status(200).json({
       success: true,
       patient: {
-        name: patient.user.name,
-        email: patient.user.email,
-        phone: patient.user.phone,
+        name: (patient.user as any).name,
+        email: (patient.user as any).email,
+        phone: (patient.user as any).phoneNumber,
         medicalHistory: patient.medicalHistory,
         allergies: patient.allergies,
         currentMedications: patient.currentMedications,
