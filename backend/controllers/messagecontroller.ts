@@ -86,7 +86,7 @@ export const getconversations = catchAsyncErrors(async (req: Request, res: Respo
     return {
       conversationId: conversation._id,
       otherParticipantId: otherParticipant._id,
-      otherParticipantName: otherParticipant.name,
+      otherParticipantName: (otherParticipant as any).name,
       lastMessage: conversation.lastMessage
     };
   });
