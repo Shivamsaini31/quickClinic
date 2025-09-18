@@ -344,10 +344,10 @@ export const appointment_specific = catchAsyncErrors(async (req: Request, res: R
   });
 
   // Filter appointments based on city
-  const cityMatches = city ? filteredAppointments.filter(app => app.doctor.user.city.toLowerCase() === city.toLowerCase()) : filteredAppointments;
+  const cityMatches = city ? filteredAppointments.filter(app => (app.doctor as any).user.city.toLowerCase() === city.toLowerCase()) : filteredAppointments;
 
   // Filter appointments based on patient name
-  const nameMatches = patientName ? cityMatches.filter(app => app.patient.name.toLowerCase().includes(patientName.toLowerCase())) : cityMatches;
+  const nameMatches = patientName ? cityMatches.filter(app => (app.patient as any).name.toLowerCase().includes(patientName.toLowerCase())) : cityMatches;
   const statusmatches = status ? nameMatches.filter(app => app.status === status) : nameMatches;
 
   res.status(200).json({
