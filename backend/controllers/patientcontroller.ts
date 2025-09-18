@@ -339,19 +339,19 @@ export const appointment_specific = catchAsyncErrors(async (req: Request, res: R
     return appointmentTime >= defaultStartTime && appointmentTime <= defaultEndTime;
   });
   // Filter appointments based on city
-  const cityMatches = city ? filteredAppointments.filter(app => app.doctor.user.city.toLowerCase() === city.toLowerCase()) : appointments;
+  const cityMatches = city ? filteredAppointments.filter(app => (app.doctor as any).user.city.toLowerCase() === city.toLowerCase()) : appointments;
 
   // Filter appointments based on specialty
-  const specialtyMatches = specialty ? cityMatches.filter(app => app.doctor.specialization.toLowerCase() === specialty.toLowerCase()) : cityMatches;
+  const specialtyMatches = specialty ? cityMatches.filter(app => (app.doctor as any).specialization.toLowerCase() === specialty.toLowerCase()) : cityMatches;
 
   // Filter appointments based on experience
-  const experienceMatches = experience ? specialtyMatches.filter(app => app.doctor.experience >= experience) : specialtyMatches;
+  const experienceMatches = experience ? specialtyMatches.filter(app => (app.doctor as any).experience >= experience) : specialtyMatches;
 
   // Filter appointments based on fees
-  const feesMatches = fees ? experienceMatches.filter(app => app.doctor.fees <= fees) : experienceMatches;
+  const feesMatches = fees ? experienceMatches.filter(app => (app.doctor as any).fees <= fees) : experienceMatches;
 
   // Filter appointments based on doctor name
-  const nameMatches = doc_name ? feesMatches.filter(app => app.doctor.user.name.toLowerCase().includes(doc_name.toLowerCase())) : feesMatches;
+  const nameMatches = doc_name ? feesMatches.filter(app => (app.doctor as any).user.name.toLowerCase().includes(doc_name.toLowerCase())) : feesMatches;
 
   res.status(200).json({
     success: true,
@@ -531,14 +531,14 @@ export const specific_doctors = catchAsyncErrors(async (req: Request, res: Respo
   if (city) {
     const lowerCaseCity = (city as string).toLowerCase();
     filteredDoctors = filteredDoctors.filter(doc =>
-      doc.user.city.toLowerCase() === lowerCaseCity
+      (doc.user as any).city.toLowerCase() === lowerCaseCity
     );
   }
 
   if (state) {
     const lowerCaseState = (state as string).toLowerCase();
     filteredDoctors = filteredDoctors.filter(doc =>
-      doc.user.state.toLowerCase() === lowerCaseState
+      (doc.user as any).state.toLowerCase() === lowerCaseState
     );
   }
 
@@ -567,7 +567,7 @@ export const specific_doctors = catchAsyncErrors(async (req: Request, res: Respo
   if (doc_name) {
     const lowerCaseDocName = (doc_name as string).toLowerCase();
     filteredDoctors = filteredDoctors.filter(doc =>
-      doc.user.name.toLowerCase().includes(lowerCaseDocName)
+      (doc.user as any).name.toLowerCase().includes(lowerCaseDocName)
     );
   }
 
@@ -656,7 +656,7 @@ export const appointment_bookings = catchAsyncErrors(async (req: Request, res: R
 
     let daySchedule: any;
     if (dayOfWeek === 0 || dayOfWeek === 6) { // Custom schedules for Sunday and Saturday
-      daySchedule = doctorSchedule.schedule.sunday || doctorSchedule.schedule.saturday;
+      daySchedule = (doctorSchedule.schedule as any).sunday || (doctorSchedule.schedule as any).saturday;
     } else {
       daySchedule = doctorSchedule.schedule;
     }

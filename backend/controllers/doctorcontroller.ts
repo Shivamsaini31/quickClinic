@@ -508,9 +508,9 @@ export const getpatients = catchAsyncErrors(async (req: Request, res: Response) 
     }
 
     const patientDetails = patients.map(patient => ({
-      name: patient.user.name,
-      email: patient.user.email,
-      phone: patient.user.phone,
+      name: (patient.user as any).name,
+      email: (patient.user as any).email,
+      phone: (patient.user as any).phoneNumber,
       medicalHistory: patient.medicalHistory,
       allergies: patient.allergies,
       currentMedications: patient.currentMedications,
