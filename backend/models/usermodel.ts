@@ -84,8 +84,8 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.getJWTToken = function (): string {
   const expiresIn = process.env.JWT_EXPIRE || '7d';
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET as string, {
-    expiresIn: expiresIn as string,
-  });
+    expiresIn: expiresIn,
+  } as jwt.SignOptions);
 };
 
 // Compare passwords

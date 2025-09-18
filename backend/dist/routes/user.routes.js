@@ -18,7 +18,6 @@ router.route("/me/updateprofile").put(auth_1.isauthenticateuser, usercontroller_
 router.route("/admin/users").get(auth_1.isauthenticateuser, (0, auth_1.authorizeroles)("admin"), usercontroller_1.getAllUser);
 router.route("/userinfo/:id").get(usercontroller_1.getsingleUser).delete(auth_1.isauthenticateuser, usercontroller_1.deleteUser);
 router.route("/checkuser").post(usercontroller_1.checkuser);
-router.route("/test").get((req, res) => res.json({ success: true, message: "Test route works" }));
 router.route("/users/:id").put(usercontroller_1.updateprofile);
 router.route("/users").get(usercontroller_1.getAllUser);
 exports.default = router;
