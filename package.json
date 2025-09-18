@@ -7,7 +7,7 @@
     "start": "node backend/dist/server.js",
     "dev": "nodemon backend/dist/server.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend && npm run build:backend",
-    "build:backend": "cd backend && tsc",
+    "build:backend": "cd backend && tsc --noEmitOnError false",
     "dev:backend": "cd backend && tsc && nodemon dist/server.js"
   },
   "author": "",

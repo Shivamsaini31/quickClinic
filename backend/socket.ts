@@ -59,6 +59,7 @@ export const initializeSocket = (server: HttpServer): void => {
   });
 };
 
+export { io };
 export const getReceiverSocketId = (receiverId: string): string | undefined => {
   return userSocketMap[receiverId];
 };
