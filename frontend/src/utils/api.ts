@@ -1,7 +1,7 @@
 // API configuration utility
 const getApiBaseUrl = () => {
   // Check if we're running on Vercel
-  if (process.env.NODE_ENV === 'production' && process.env.VERCEL) {
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
     // On Vercel, use the current domain for API calls
     return `${window.location.origin}/api/v1`;
   }
