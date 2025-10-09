@@ -2,6 +2,12 @@
 
 ## Vercel Deployment Setup
 
+### ⚠️ IMPORTANT: If you're getting 404 errors, follow these steps:
+
+1. **Delete your current Vercel deployment** and redeploy with the new configuration
+2. **Make sure all environment variables are set** in Vercel dashboard
+3. **Check the build logs** in Vercel dashboard for any errors
+
 ### 1. Environment Variables
 You need to set the following environment variables in your Vercel dashboard:
 
@@ -48,12 +54,19 @@ origin: process.env.NODE_ENV === 'production'
 ```
 
 ### 5. Deployment Steps:
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Set the environment variables in Vercel dashboard
-4. Deploy
+1. **Delete your current Vercel deployment** (if it exists)
+2. Push your code to GitHub
+3. Connect your repository to Vercel
+4. Set the environment variables in Vercel dashboard
+5. Deploy
 
-### 6. Important Notes:
+### 6. Testing Your Deployment:
+After deployment, test these endpoints:
+- `https://your-app.vercel.app/api/health` - Should return "API is working!"
+- `https://your-app.vercel.app/api/v1/users` - Should return your API response
+- `https://your-app.vercel.app/` - Should show your React frontend
+
+### 7. Important Notes:
 - Socket.io functionality is disabled on Vercel (serverless functions don't support persistent connections)
 - Database connections are handled per-request in serverless environment
 - File uploads should be handled through cloud storage (AWS S3, Cloudinary, etc.)
