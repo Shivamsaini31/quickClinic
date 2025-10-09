@@ -7,6 +7,7 @@
 1. **Delete your current Vercel deployment** and redeploy with the new configuration
 2. **Make sure all environment variables are set** in Vercel dashboard
 3. **Check the build logs** in Vercel dashboard for any errors
+4. **Ensure Node.js version is set to 18.x** in Vercel project settings
 
 ### 1. Environment Variables
 You need to set the following environment variables in your Vercel dashboard:
