@@ -9,20 +9,24 @@ import path from 'path'; // Import path for handling file paths
 // Load environment variables
 dotenv.config({ path: 'backend/config/config.env' });
 
-// Connect to the database
-connect_Database();
+// Connect to the database only if not on Vercel
+if (!process.env.VERCEL) {
+  connect_Database();
+}
 
 // Create the HTTP server
 const server = http.createServer(app);
 
-// Initialize socket with the created server
-initializeSocket(server);
+// Initialize socket with the created server only if not on Vercel
+if (!process.env.VERCEL) {
+  initializeSocket(server);
+}
 
 // Export the app for Vercel
 export default app;
 
 // Start the server only if not on Vercel
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

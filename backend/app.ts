@@ -4,19 +4,25 @@ import cookieParser from 'cookie-parser';
 import Errormiddleware from './middleware/error';
 import session from 'express-session';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: 'backend/config/config.env' });
 
 const app = express(); // Create Express app
 
 // Middleware to parse JSON and URL-encoded data
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+app.use(bodyParser.json({ limit: '10mb' }));
 
 // CORS setup
 app.use(
   cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['https://your-domain.vercel.app', 'https://quickclinic.vercel.app'] 
+      : '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   })
 );
@@ -30,16 +36,17 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// Use session middleware
+// Use session middleware (simplified for serverless)
 app.use(
   session({
-    secret: '2ub2bf9242hcbnubcwcwshbccianci', // Use a secret key
+    secret: process.env.SESSION_SECRET || '2ub2bf9242hcbnubcwcwshbccianci',
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
 );
