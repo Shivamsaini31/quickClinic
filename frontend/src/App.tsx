@@ -18,15 +18,17 @@ function App() {
     <AuthProvider>
       <SocketProvider>
         <Router>
-          <div className="App">
+          <div className="App min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
             <Header />
-            <Routes>
-              <Route path="/" element={<Navigate to="/user/home" />} />
-              <Route path='/user/*' element={<UserRoutes />} />
-              <Route path='/patient/*' element={<PatientRoutes />} />
-              <Route path='/doctor/*' element={<DoctorRoutes />} />
-              <Route path='/payment-appointment' element={<Paymentroutes />} />
-            </Routes>
+            <main className="pt-20">
+              <Routes>
+                <Route path="/" element={<Navigate to="/user/home" />} />
+                <Route path='/user/*' element={<UserRoutes />} />
+                <Route path='/patient/*' element={<PatientRoutes />} />
+                <Route path='/doctor/*' element={<DoctorRoutes />} />
+                <Route path='/payment-appointment' element={<Paymentroutes />} />
+              </Routes>
+            </main>
             <Footer />
           </div>
         </Router>
