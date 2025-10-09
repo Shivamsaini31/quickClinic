@@ -34,77 +34,159 @@ const HomePage: React.FC = () => {
         </Container>
       </div>
 
-      {/* Slideshow Section */}
-      <div className='flex justify-center align-items-center py-16'>
-        <Container className="mt-5 ml-36">
-          <Carousel fade className="carousel-animated">
-            <Carousel.Item>
-              <div className="d-block w-full h-96 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-lg flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="text-6xl mb-4">🏥</div>
-                  <h3 className="text-4xl font-bold">Quality Healthcare</h3>
-                </div>
-              </div>
-              <Carousel.Caption className="bg-black bg-opacity-50 rounded-lg p-4">
-                <h3 className="animate-zoom-in text-2xl font-bold text-white">Quality Healthcare</h3>
-                <p className="animate-fade-in text-white">We provide the best medical care in the city.</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <div className="d-block w-full h-96 bg-gradient-to-r from-green-500 to-green-700 rounded-lg shadow-lg flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="text-6xl mb-4">👨‍⚕️</div>
-                  <h3 className="text-4xl font-bold">Experienced Doctors</h3>
-                </div>
-              </div>
-              <Carousel.Caption className="bg-black bg-opacity-50 rounded-lg p-4">
-                <h3 className="animate-zoom-in text-2xl font-bold text-white">Experienced Doctors</h3>
-                <p className="animate-fade-in text-white">Our team of doctors are highly skilled and experienced.</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <div className="d-block w-full h-96 bg-gradient-to-r from-purple-500 to-purple-700 rounded-lg shadow-lg flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="text-6xl mb-4">🏗️</div>
-                  <h3 className="text-4xl font-bold">State-of-the-art Facilities</h3>
-                </div>
-              </div>
-              <Carousel.Caption className="bg-black bg-opacity-50 rounded-lg p-4">
-                <h3 className="animate-zoom-in text-2xl font-bold text-white">State-of-the-art Facilities</h3>
-                <p className="animate-fade-in text-white">We use the latest technology to provide exceptional care.</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-          </Carousel>
+      {/* Features Section */}
+      <div className="relative z-10 py-20">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold font-neon mb-6 bg-gradient-to-r from-neon-400 to-cyan-400 bg-clip-text text-transparent">
+              Why Choose QuickClinic?
+            </h2>
+            <p className="text-xl text-white/80 max-w-3xl mx-auto">
+              Experience healthcare reimagined with cutting-edge technology and compassionate care
+            </p>
+          </motion.div>
+
+          <Row className="g-4">
+            {[
+              {
+                icon: <Heart className="w-12 h-12" />,
+                title: "Quality Healthcare",
+                description: "We provide the best medical care with state-of-the-art facilities and experienced professionals.",
+                gradient: "from-red-500 to-pink-500"
+              },
+              {
+                icon: <Stethoscope className="w-12 h-12" />,
+                title: "Expert Doctors",
+                description: "Our team of highly skilled and experienced doctors are dedicated to your well-being.",
+                gradient: "from-neon-500 to-cyan-500"
+              },
+              {
+                icon: <Shield className="w-12 h-12" />,
+                title: "Advanced Technology",
+                description: "We use the latest medical technology to provide exceptional and accurate care.",
+                gradient: "from-green-500 to-emerald-500"
+              },
+              {
+                icon: <Clock className="w-12 h-12" />,
+                title: "24/7 Support",
+                description: "Round-the-clock support and emergency services for your peace of mind.",
+                gradient: "from-purple-500 to-violet-500"
+              }
+            ].map((feature, index) => (
+              <Col lg={3} md={6} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <GlassCard hover className="h-full text-center">
+                    <motion.div
+                      className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r ${feature.gradient} flex items-center justify-center text-white`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {feature.icon}
+                    </motion.div>
+                    <h3 className="text-xl font-bold text-white mb-4">{feature.title}</h3>
+                    <p className="text-white/80 leading-relaxed">{feature.description}</p>
+                  </GlassCard>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
         </Container>
       </div>
 
       {/* About Us Section */}
-      <Container className="about-us mt-5 py-16">
-        <Row>
-          <Col md={6} className="animate-slide-up">
-            <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg shadow-lg w-full h-96 flex items-center justify-center">
-              <div className="text-center text-gray-600">
-                <div className="text-8xl mb-4">🏥</div>
-                <h3 className="text-2xl font-bold">Our Clinic</h3>
-              </div>
-            </div>
-          </Col>
-          <Col md={6} className="d-flex flex-column justify-content-center animate-slide-up pl-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">About Doctor Quick Clinic</h2>
-            <p className="text-gray-600 text-lg leading-relaxed mb-6">
-              Doctor Quick Clinic is dedicated to providing comprehensive healthcare services. Our mission is to enhance
-              the well-being of our community through compassionate care and the latest medical advancements.
-            </p>
-            <Button 
-              variant="outline-primary" 
-              size="lg" 
-              className="mt-3 animate-hover-grow border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white font-semibold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105"
-            >
-              Learn More
-            </Button>
-          </Col>
-        </Row>
-      </Container>
+      <div className="relative z-10 py-20">
+        <Container>
+          <Row className="items-center">
+            <Col lg={6} className="mb-12 lg:mb-0">
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+              >
+                <GlassCard glow className="p-8 h-96 flex items-center justify-center">
+                  <div className="text-center">
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{ 
+                        duration: 4, 
+                        repeat: Infinity, 
+                        ease: "easeInOut" 
+                      }}
+                      className="w-32 h-32 mx-auto mb-6 bg-gradient-to-r from-neon-500 to-cyan-500 rounded-full flex items-center justify-center"
+                    >
+                      <Heart className="w-16 h-16 text-white" />
+                    </motion.div>
+                    <h3 className="text-3xl font-bold text-white">Our Mission</h3>
+                    <p className="text-white/80 mt-4">
+                      Transforming healthcare through innovation and compassion
+                    </p>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            </Col>
+            
+            <Col lg={6}>
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="pl-0 lg:pl-8"
+              >
+                <h2 className="text-4xl md:text-5xl font-bold font-neon mb-8 bg-gradient-to-r from-neon-400 to-cyan-400 bg-clip-text text-transparent">
+                  About QuickClinic
+                </h2>
+                <p className="text-xl text-white/90 leading-relaxed mb-8">
+                  QuickClinic is dedicated to revolutionizing healthcare through cutting-edge technology, 
+                  compassionate care, and innovative solutions. Our mission is to enhance the well-being 
+                  of our community by providing accessible, high-quality medical services.
+                </p>
+                <div className="space-y-4 mb-8">
+                  {[
+                    "Advanced Medical Technology",
+                    "Experienced Healthcare Professionals", 
+                    "24/7 Emergency Services",
+                    "Personalized Patient Care"
+                  ].map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="flex items-center gap-3"
+                    >
+                      <div className="w-2 h-2 bg-gradient-to-r from-neon-400 to-cyan-400 rounded-full" />
+                      <span className="text-white/90">{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+                <Link to="/user/signup">
+                  <NeonButton size="lg">
+                    <Zap className="w-5 h-5" />
+                    Join Our Community
+                  </NeonButton>
+                </Link>
+              </motion.div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     </div>
   );
 };
