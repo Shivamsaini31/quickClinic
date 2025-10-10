@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import ParticleBackground from '../common/ParticleBackground';
+import SimpleParticleBackground from '../common/SimpleParticleBackground';
 import GlassCard from '../common/GlassCard';
 import NeonButton from '../common/NeonButton';
 import { Heart, Stethoscope, Shield, Zap, Users, Clock } from 'lucide-react';
@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="homepage relative min-h-screen overflow-hidden">
       {/* Particle Background */}
-      <ParticleBackground />
+      <SimpleParticleBackground />
       
       {/* Hero Section */}
       <div className="relative z-10 min-h-screen flex items-center justify-center">
