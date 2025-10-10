@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../auth/AuthContext';
-import ParticleBackground from '../../common/ParticleBackground';
+import SimpleParticleBackground from '../../common/SimpleParticleBackground';
 import GlassCard from '../../common/GlassCard';
 import NeonButton from '../../common/NeonButton';
 import { Mail, Lock, Eye, EyeOff, LogIn, UserPlus, Stethoscope } from 'lucide-react';
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Particle Background */}
-      <ParticleBackground />
+      <SimpleParticleBackground />
       
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
