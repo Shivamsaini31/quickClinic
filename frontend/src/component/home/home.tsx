@@ -1,34 +1,93 @@
 import React from 'react';
-import { Carousel, Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import ParticleBackground from '../common/ParticleBackground';
+import GlassCard from '../common/GlassCard';
+import NeonButton from '../common/NeonButton';
+import { Heart, Stethoscope, Shield, Zap, Users, Clock } from 'lucide-react';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="homepage flex flex-col">
+    <div className="homepage relative min-h-screen overflow-hidden">
+      {/* Particle Background */}
+      <ParticleBackground />
+      
       {/* Hero Section */}
-      <div className="hero-section d-flex align-items-center justify-content-center bg-gradient-to-r from-blue-600 to-blue-800 min-h-screen">
-        <Container>
-          <Row>
-            <Col md={6} className="text-center text-md-left ml-16">
-              <h1 className="display-4 text-white animate-fade-in font-bold text-4xl md:text-6xl mb-6">
-                Welcome to Doctor Quick Clinic
-              </h1>
-              <p className="text-white lead animate-slide-in mt-6 text-lg md:text-xl mb-8">
-                Your health, our priority. Join us today for a healthier tomorrow!
-              </p>
-              {/* Link to the login page */}
-              <Link to="/user/login">
-                <Button 
-                  variant="primary" 
-                  size="lg" 
-                  className="mt-6 animate-bounce bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105"
+      <div className="relative z-10 min-h-screen flex items-center justify-center">
+        <Container className="relative z-20">
+          <Row className="items-center">
+            <Col lg={6} className="text-center lg:text-left">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <motion.h1 
+                  className="text-5xl md:text-7xl font-bold font-neon mb-6 bg-gradient-to-r from-neon-400 via-cyan-400 to-neon-500 bg-clip-text text-transparent animate-glow"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.2 }}
                 >
-                  Get Started
-                </Button>
-              </Link>
+                  QuickClinic
+                </motion.h1>
+                
+                <motion.p 
+                  className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                  Your health, our priority. Experience the future of healthcare with our 
+                  <span className="text-cyan-400 font-semibold"> cutting-edge technology</span> and 
+                  <span className="text-neon-400 font-semibold"> compassionate care</span>.
+                </motion.p>
+                
+                <motion.div 
+                  className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                >
+                  <Link to="/user/login">
+                    <NeonButton size="lg" className="w-full sm:w-auto">
+                      <Zap className="w-5 h-5" />
+                      Get Started
+                    </NeonButton>
+                  </Link>
+                  <Link to="/user/signup">
+                    <NeonButton variant="outline" size="lg" className="w-full sm:w-auto">
+                      <Users className="w-5 h-5" />
+                      Join Now
+                    </NeonButton>
+                  </Link>
+                </motion.div>
+              </motion.div>
             </Col>
-            <Col>
-              {/* Empty column for layout */}
+            
+            <Col lg={6} className="mt-12 lg:mt-0">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.3 }}
+                className="relative"
+              >
+                <GlassCard glow className="p-8">
+                  <div className="text-center">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      className="w-32 h-32 mx-auto mb-6 bg-gradient-to-r from-neon-500 to-cyan-500 rounded-full flex items-center justify-center"
+                    >
+                      <Stethoscope className="w-16 h-16 text-white" />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Advanced Healthcare</h3>
+                    <p className="text-white/80">
+                      State-of-the-art medical facilities with experienced professionals
+                    </p>
+                  </div>
+                </GlassCard>
+              </motion.div>
             </Col>
           </Row>
         </Container>

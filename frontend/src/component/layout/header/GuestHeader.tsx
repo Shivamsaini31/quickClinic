@@ -7,8 +7,7 @@ import {
   Home as HomeIcon,
   Info as InfoIcon,
   ContactMail as ContactIcon,
-  Login as LoginIcon,
-  PersonAdd as SignupIcon
+  Login as LoginIcon
 } from '@mui/icons-material';
 import NeonButton from '../../common/NeonButton';
 import { Stethoscope, Zap } from 'lucide-react';
