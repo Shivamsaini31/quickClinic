@@ -34,7 +34,20 @@ const UpdatePage: React.FC = () => {
         city,
         state
       });
+      console.log(data);
       if (data.success) {
+        // Update localStorage with the new user data
+        const updatedAuthData = {
+          ...JSON.parse(authState || '{}'),
+          user: data.user
+        };
+        localStorage.setItem('authState', JSON.stringify(updatedAuthData));
+        
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new CustomEvent('userDataUpdated', { 
+          detail: { user: data.user } 
+        }));
+        
         navigate(location.state?.from || '/user/home');
         alert("Update successful!");
       } else {

@@ -9,13 +9,17 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const error_1 = __importDefault(require("./middleware/error"));
 const express_session_1 = __importDefault(require("express-session"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config({ path: 'backend/config/config.env' });
 const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.use(body_parser_1.default.urlencoded({ extended: true }));
-app.use(body_parser_1.default.json());
+app.use(express_1.default.json({ limit: '10mb' }));
+app.use(body_parser_1.default.urlencoded({ extended: true, limit: '10mb' }));
+app.use(body_parser_1.default.json({ limit: '10mb' }));
 app.use((0, cors_1.default)({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: process.env.NODE_ENV === 'production'
+        ? ['https://your-domain.vercel.app', 'https://quickclinic.vercel.app']
+        : '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
 }));
 app.use((0, cookie_parser_1.default)());
@@ -24,13 +28,14 @@ app.use((req, res, next) => {
     next();
 });
 app.use((0, express_session_1.default)({
-    secret: '2ub2bf9242hcbnubcwcwshbccianci',
+    secret: process.env.SESSION_SECRET || '2ub2bf9242hcbnubcwcwshbccianci',
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000,
     },
 }));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));

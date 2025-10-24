@@ -65,23 +65,27 @@ const AppointmentHistory = () => {
 
   // Fetch search results from the backend with filters
   const handleSearch = async () => {
-    console.log(endDate);
-    console.log("startdate", startDate);
+   // console.log("Search filters:", { startDate, endDate, startTime, endTime, city, specialist, docName });
     try {
       setLoading(true);
+      
+      // Build params object with only non-empty values
+      const params: any = {};
+      if (startDate && startDate.trim()) params.startDate = startDate;
+      if (endDate && endDate.trim()) params.endDate = endDate;
+      if (startTime && startTime.trim()) params.startTime = startTime;
+      if (endTime && endTime.trim()) params.endTime = endTime;
+      if (city && city.trim()) params.city = city;
+      if (specialist && specialist.trim()) params.specialty = specialist;
+      if (docName && docName.trim()) params.doc_name = docName;
+      
+    //  console.log("Sending params:", params);
+      
       const response = await axios.get(api.getUrl(`${id}/patient/specific_appointment`), {
-        params: {
-          startDate,
-          endDate,
-          startTime,
-          endTime,
-          city,
-          specialty: specialist,
-          doc_name: docName
-        }
+        params
       });
       const data = response.data.appointments;
-      console.log(data);
+    //  console.log("Filtered appointments:", data);
       setAppointments(data || []);
     } catch (error) {
       console.error('Error fetching search results:', error);
@@ -104,6 +108,18 @@ const AppointmentHistory = () => {
   const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => setCity(e.target.value);
   const handleSpecialistChange = (e: React.ChangeEvent<HTMLInputElement>) => setSpecialist(e.target.value);
   const handleDocNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setDocName(e.target.value);
+
+  // Clear all filters
+  const clearFilters = () => {
+    setStartDate('');
+    setEndDate('');
+    setStartTime('');
+    setEndTime('');
+    setCity('');
+    setSpecialist('');
+    setDocName('');
+    fetchUsualAppointments(); // Reload all appointments
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -239,14 +255,22 @@ const AppointmentHistory = () => {
                 className="px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white transition-all duration-300"
               />
             </div>
-            <div className="flex items-end">
+            <div className="flex items-end gap-4">
               <button 
                 onClick={handleSearch} 
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
               >
                 Apply Filters
               </button>
+              <button 
+                onClick={clearFilters} 
+                className="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+              >
+                Clear Filters
+              </button>
             </div>
+            
+            
           </div>
         </div>
 

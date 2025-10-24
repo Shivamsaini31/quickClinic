@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   CitySelect,
   CountrySelect,
@@ -10,6 +11,10 @@ import axios from 'axios';
 import { api } from '../../../../utils/api';
 import DoctorCard from '../doctorlist/doctorlist';
 import appointment from '../../../../images/appointment1.jpg';
+import SimpleParticleBackground from '../../../common/SimpleParticleBackground';
+import GlassCard from '../../../common/GlassCard';
+import NeonButton from '../../../common/NeonButton';
+import { Search, MapPin, User, Stethoscope, Clock, DollarSign, Calendar } from 'lucide-react';
 
 interface Doctor {
   _id: string;
@@ -65,125 +70,252 @@ const BookingPage: React.FC = () => {
 
   const specialties = ['Cardiologist', 'Dermatologist', 'Neurologist', 'Orthopedist', 'Pediatrician', 'Psychiatrist', 'Gynecologist', 'General Physician'];
 
-  const getDynamicPadding = () => {
-    const cardHeight = 200; // Approximate height of each doctor card
-    const containerPadding = 50; // Base padding to avoid collision with the footer
-
-    // Ensure doctors is an array and has a length property
-    const numberOfDoctors = Array.isArray(doctors) ? doctors.length : 0;
-    const extraPadding = numberOfDoctors > 3 ? (numberOfDoctors - 3) * cardHeight : 0;
-
-    return { paddingBottom: `${containerPadding + extraPadding}px` };
-  };
 
   return (
-    <div className="flex justify-center items-center flex-col min-h-screen bg-gray-50" style={getDynamicPadding()}>
-      <h1 className="text-4xl font-bold text-gray-800 mt-8 mb-8">Book an Appointment</h1>
-      <div className="flex gap-36 max-w-7xl mx-auto px-4">
-        <div className="animated-form bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-          {/* Form Fields */}
-          <h6 className="text-sm font-medium text-gray-700 mb-2">Country</h6>
-          <CountrySelect
-            defaultValue={{ isoCode: 'IN', name: 'India' }}
-            onChange={(e: any) => setCountryId(e.id)}
-            placeHolder="Select Country"
-            required
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Particle Background */}
+      <SimpleParticleBackground />
+      
+      {/* Main Content */}
+      <div className="relative z-10 pt-28 pb-12">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-4xl md:text-6xl font-bold font-neon mb-6 bg-gradient-to-r from-neon-400 to-cyan-400 bg-clip-text text-transparent">
+            Book an Appointment
+          </h1>
+          <p className="text-xl text-white/80 max-w-3xl mx-auto">
+            Find the perfect doctor for your healthcare needs
+          </p>
+        </motion.div>
 
-          <h6 className="text-sm font-medium text-gray-700 mb-2 mt-4">State</h6>
-          <StateSelect
-            countryid={countryId}
-            onChange={(e: any) => {
-              setStateId(e.id);
-              setState(e.value); // Assuming 'e.value' contains the state name
-            }}
-            placeHolder="Select State"
-            required
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+        {/* Search Form and Image */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Search Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <GlassCard glow className="p-8">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-r from-neon-500 to-cyan-500 rounded-full flex items-center justify-center text-white mr-4">
+                    <Search className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-white">Search Doctors</h2>
+                </div>
 
-          <h6 className="text-sm font-medium text-gray-700 mb-2 mt-4">City</h6>
-          <CitySelect
-            countryid={countryId}
-            stateid={stateId}
-            onChange={(e: any) => setCityId(e.name)}
-            placeHolder="Select City"
-            required
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Location Fields */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-white/90 mb-2">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Country
+                      </label>
+                      <CountrySelect
+                        defaultValue={{ isoCode: 'IN', name: 'India' }}
+                        onChange={(e: any) => setCountryId(e.id)}
+                        placeHolder="Select Country"
+                        required
+                        className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+                      />
+                    </div>
 
-          <h6 className="text-sm font-medium text-gray-700 mb-2 mt-4">Specialty</h6>
-          <select
-            value={specialty}
-            onChange={(e) => setSpecialty(e.target.value)}
-            className="animated-input w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-          >
-            <option value="" disabled>
-              Select Specialty
-            </option>
-            {specialties.map((spec, index) => (
-              <option key={index} value={spec}>
-                {spec}
-              </option>
-            ))}
-          </select>
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-white/90 mb-2">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        State
+                      </label>
+                      <StateSelect
+                        countryid={countryId}
+                        onChange={(e: any) => {
+                          setStateId(e.id);
+                          setState(e.value);
+                        }}
+                        placeHolder="Select State"
+                        required
+                        className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+                      />
+                    </div>
 
-          <h6 className="text-sm font-medium text-gray-700 mb-2 mt-4">Experience (Years)</h6>
-          <input
-            type="number"
-            value={experience}
-            onChange={(e) => setExperience(e.target.value)}
-            className="animated-input w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter Experience"
-            min="0"
-            required
-          />
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-white/90 mb-2">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        City
+                      </label>
+                      <CitySelect
+                        countryid={countryId}
+                        stateid={stateId}
+                        onChange={(e: any) => setCityId(e.name)}
+                        placeHolder="Select City"
+                        required
+                        className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+                      />
+                    </div>
+                  </div>
 
-          <h6 className="text-sm font-medium text-gray-700 mb-2 mt-4">Fees</h6>
-          <input
-            type="number"
-            value={fees}
-            onChange={(e) => setFees(e.target.value)}
-            className="animated-input w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter Fees"
-            min="0"
-            required
-          />
+                  {/* Specialty and Experience */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-white/90 mb-2">
+                        <Stethoscope className="w-4 h-4 mr-2" />
+                        Specialty
+                      </label>
+                      <select
+                        value={specialty}
+                        onChange={(e) => setSpecialty(e.target.value)}
+                        className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+                     
+                      >
+                        <option value="" disabled className="bg-gray-800">
+                          Select Specialty
+                        </option>
+                        {specialties.map((spec, index) => (
+                          <option key={index} value={spec} className="bg-gray-800">
+                            {spec}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-          <h6 className="text-sm font-medium text-gray-700 mb-2 mt-4">Doctor's Name</h6>
-          <input
-            type="text"
-            value={doctorName}
-            onChange={(e) => setDoctorName(e.target.value)}
-            className="animated-input w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter Doctor's Name"
-            required
-          />
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-white/90 mb-2">
+                        <Clock className="w-4 h-4 mr-2" />
+                        Experience (Years)
+                      </label>
+                      <input
+                        type="number"
+                        value={experience}
+                        onChange={(e) => setExperience(e.target.value)}
+                        className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+                        placeholder="Enter Experience"
+                        min="0"
+                      
+                      />
+                    </div>
+                  </div>
 
-          <button 
-            type="submit" 
-            onClick={handleSubmit} 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition duration-300 transform hover:scale-105 mt-6"
-          >
-            Find Doctors
-          </button>
+                  {/* Fees and Doctor Name */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-white/90 mb-2">
+                        <DollarSign className="w-4 h-4 mr-2" />
+                        Fees
+                      </label>
+                      <input
+                        type="number"
+                        value={fees}
+                        onChange={(e) => setFees(e.target.value)}
+                        className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+                        placeholder="Enter Fees"
+                        min="0"
+                        
+                      />
+                    </div>
+
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-white/90 mb-2">
+                        <User className="w-4 h-4 mr-2" />
+                        Doctor's Name
+                      </label>
+                      <input
+                        type="text"
+                        value={doctorName}
+                        onChange={(e) => setDoctorName(e.target.value)}
+                        className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+                        placeholder="Enter Doctor's Name"
+                       
+                      />
+                    </div>
+                  </div>
+
+                  <NeonButton
+                    type="submit"
+                    size="lg"
+                    className="w-full justify-center"
+                  >
+                    <Search className="w-5 h-5" />
+                    Find Doctors
+                  </NeonButton>
+                </form>
+              </GlassCard>
+            </motion.div>
+
+            {/* Image Section */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex justify-center items-center"
+            >
+              <GlassCard glow className="p-8">
+                <div className="text-center">
+                  <motion.div
+                    animate={{ 
+                      scale: [1, 1.05, 1],
+                      rotate: [0, 2, -2, 0]
+                    }}
+                    transition={{ 
+                      duration: 4, 
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
+                    }}
+                    className="w-32 h-32 mx-auto mb-6 bg-gradient-to-r from-neon-500 to-cyan-500 rounded-full flex items-center justify-center"
+                  >
+                    <Calendar className="w-16 h-16 text-white" />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-white mb-4">Easy Booking</h3>
+                  <p className="text-white/80 mb-6">
+                    Find and book appointments with verified doctors in just a few clicks
+                  </p>
+                  <img 
+                    src={appointment} 
+                    className='rounded-2xl shadow-2xl max-w-sm w-full h-auto mx-auto' 
+                    alt='Appointment booking illustration' 
+                  />
+                </div>
+              </GlassCard>
+            </motion.div>
+          </div>
         </div>
-        <div className='flex justify-center items-center'>
-          <img 
-            src={appointment} 
-            className='rounded-3xl shadow-2xl max-w-md w-full h-auto' 
-            alt='Appointment booking illustration' 
-          />
-        </div>
-      </div>
 
-      {/* Render DoctorCard components */}
-      <div className="doctor-cards-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 max-w-7xl mx-auto px-4">
-        {doctors.map((doctor) => (
-          <DoctorCard key={doctor._id} doctor={doctor} />
-        ))}
+        {/* Doctor Results */}
+        {doctors.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          >
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold font-neon mb-4 bg-gradient-to-r from-neon-400 to-cyan-400 bg-clip-text text-transparent">
+                Available Doctors
+              </h2>
+              <p className="text-white/80">
+                {doctors.length} doctor{doctors.length !== 1 ? 's' : ''} found matching your criteria
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {doctors.map((doctor, index) => (
+                <motion.div
+                  key={doctor._id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
+                  <DoctorCard doctor={doctor} />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );
