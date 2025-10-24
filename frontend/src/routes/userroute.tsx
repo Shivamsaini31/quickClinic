@@ -9,11 +9,13 @@ import UserInfoPage from '../component/users/info/UserInfoPage';
 import ChatViewPage from '../component/chats/chatview';
 import ChatPage from '../component/chats/messages/chats';
 import About from '../component/users/about/about';
+import TestComponent from '../component/common/TestComponent';
 
 const UserRoutes: React.FC = () => (
   <>
     <Routes>
       <Route path='/home' element={<Home />} />
+      <Route path='/test' element={<TestComponent />} />
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<Signup />} />
       <Route path='/forgot' element={<Forgot />} />

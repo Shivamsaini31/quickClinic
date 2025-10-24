@@ -187,6 +187,7 @@ exports.updateprofile = (0, catchAsyncErrors_1.default)(async (req, res, next) =
     if (!user) {
         return next(new errorhander_1.default("User not found", 404));
     }
+    console.log(user);
     if (req.body.name)
         user.name = req.body.name;
     if (req.body.email)

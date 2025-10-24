@@ -299,7 +299,35 @@ export const appointment_history_all = catchAsyncErrors(async (req: Request, res
 
 export const appointment_specific = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
-  const { startDate, endDate, startTime, endTime, city, specialty, experience, fees, doc_name } = req.body;
+  const { startDate, endDate, startTime, endTime, city, specialty, experience, fees, doc_name } = req.query;
+
+  // Convert query parameters to strings, handling undefined values
+  const startDateStr = startDate ? (Array.isArray(startDate) ? startDate[0] as string : startDate as string) : undefined;
+  const endDateStr = endDate ? (Array.isArray(endDate) ? endDate[0] as string : endDate as string) : undefined;
+  const startTimeStr = startTime ? (Array.isArray(startTime) ? startTime[0] as string : startTime as string) : undefined;
+  const endTimeStr = endTime ? (Array.isArray(endTime) ? endTime[0] as string : endTime as string) : undefined;
+  const cityStr = city ? (Array.isArray(city) ? city[0] as string : city as string) : undefined;
+  const specialtyStr = specialty ? (Array.isArray(specialty) ? specialty[0] as string : specialty as string) : undefined;
+  const experienceStr = experience ? (Array.isArray(experience) ? experience[0] as string : experience as string) : undefined;
+  const feesStr = fees ? (Array.isArray(fees) ? fees[0] as string : fees as string) : undefined;
+  const docNameStr = doc_name ? (Array.isArray(doc_name) ? doc_name[0] as string : doc_name as string) : undefined;
+
+  console.log('Patient appointment filter request:', { 
+    id, 
+    startDateStr, 
+    endDateStr, 
+    startTimeStr, 
+    endTimeStr, 
+    cityStr, 
+    specialtyStr, 
+    experienceStr, 
+    feesStr, 
+    docNameStr 
+  });
+  
+  // Debug: Check if any filters are actually provided
+  const hasFilters = startDateStr || endDateStr || startTimeStr || endTimeStr || cityStr || specialtyStr || experienceStr || feesStr || docNameStr;
+  console.log('Has filters:', hasFilters);
 
   const patient = await Patient.findOne({ user: id });
 
@@ -312,10 +340,10 @@ export const appointment_specific = catchAsyncErrors(async (req: Request, res: R
   const hundredYearsAgo = new Date(now.getFullYear() - 100, now.getMonth(), now.getDate());
   const hundredYearsFromNow = new Date(now.getFullYear() + 100, now.getMonth(), now.getDate());
 
-  const effectiveStartDate = startDate ? new Date(startDate) : hundredYearsAgo;
-  const effectiveEndDate = endDate ? new Date(endDate) : hundredYearsFromNow;
-  const defaultStartTime = startTime || '00:00:00';
-  const defaultEndTime = endTime || '23:59:59';
+  const effectiveStartDate = startDateStr ? new Date(startDateStr) : hundredYearsAgo;
+  const effectiveEndDate = endDateStr ? new Date(endDateStr) : hundredYearsFromNow;
+  const defaultStartTime = startTimeStr || '00:00:00';
+  const defaultEndTime = endTimeStr || '23:59:59';
 
   // Find all appointments for the patient
   const appointments = await Appointment.find({
@@ -339,19 +367,94 @@ export const appointment_specific = catchAsyncErrors(async (req: Request, res: R
     return appointmentTime >= defaultStartTime && appointmentTime <= defaultEndTime;
   });
   // Filter appointments based on city
-  const cityMatches = city ? filteredAppointments.filter(app => (app.doctor as any).user.city.toLowerCase() === city.toLowerCase()) : appointments;
+  const cityMatches = cityStr ? filteredAppointments.filter(app => {
+    const doctorCity = (app.doctor as any)?.user?.city;
+    console.log('City filter - comparing:', { doctorCity, filterCity: cityStr, match: doctorCity?.toLowerCase() === cityStr.toLowerCase() });
+    return doctorCity?.toLowerCase() === cityStr.toLowerCase();
+  }) : filteredAppointments;
 
   // Filter appointments based on specialty
-  const specialtyMatches = specialty ? cityMatches.filter(app => (app.doctor as any).specialization.toLowerCase() === specialty.toLowerCase()) : cityMatches;
+  const specialtyMatches = specialtyStr ? cityMatches.filter(app => {
+    const doctorSpecialty = (app.doctor as any)?.specialization;
+    console.log('Specialty filter - comparing:', { doctorSpecialty, filterSpecialty: specialtyStr, match: doctorSpecialty?.toLowerCase() === specialtyStr.toLowerCase() });
+    return doctorSpecialty?.toLowerCase() === specialtyStr.toLowerCase();
+  }) : cityMatches;
 
   // Filter appointments based on experience
-  const experienceMatches = experience ? specialtyMatches.filter(app => (app.doctor as any).experience >= experience) : specialtyMatches;
+  const experienceMatches = experienceStr ? specialtyMatches.filter(app => (app.doctor as any).experience >= parseInt(experienceStr)) : specialtyMatches;
 
   // Filter appointments based on fees
-  const feesMatches = fees ? experienceMatches.filter(app => (app.doctor as any).fees <= fees) : experienceMatches;
+  const feesMatches = feesStr ? experienceMatches.filter(app => (app.doctor as any).fees <= parseInt(feesStr)) : experienceMatches;
 
   // Filter appointments based on doctor name
-  const nameMatches = doc_name ? feesMatches.filter(app => (app.doctor as any).user.name.toLowerCase().includes(doc_name.toLowerCase())) : feesMatches;
+  const nameMatches = docNameStr ? feesMatches.filter(app => {
+    const doctorName = (app.doctor as any)?.user?.name;
+    const match = doctorName?.toLowerCase().includes(docNameStr.toLowerCase());
+    console.log('Name filter - comparing:', { 
+      doctorName, 
+      filterName: docNameStr, 
+      match,
+      appointmentId: app._id
+    });
+    return match;
+  }) : feesMatches;
+
+  // Debug: Log sample appointment data structure
+  if (appointments.length > 0) {
+    console.log('Sample appointment data structure:', {
+      appointment: appointments[0],
+      doctor: (appointments[0] as any).doctor,
+      doctorUser: (appointments[0] as any).doctor?.user,
+      doctorCity: (appointments[0] as any).doctor?.user?.city,
+      doctorSpecialization: (appointments[0] as any).doctor?.specialization,
+      doctorExperience: (appointments[0] as any).doctor?.experience,
+      doctorFees: (appointments[0] as any).doctor?.fees,
+      doctorName: (appointments[0] as any).doctor?.user?.name
+    });
+  }
+
+  console.log('Filter results:', {
+    totalAppointments: appointments.length,
+    afterTimeFilter: filteredAppointments.length,
+    afterCityFilter: cityMatches.length,
+    afterSpecialtyFilter: specialtyMatches.length,
+    afterExperienceFilter: experienceMatches.length,
+    afterFeesFilter: feesMatches.length,
+    afterNameFilter: nameMatches.length,
+    finalResults: nameMatches.length
+  });
+
+  // If no filters applied, return all appointments
+  if (!hasFilters) {
+    console.log('No filters applied, returning all appointments');
+    return res.status(200).json({
+      success: true,
+      appointments: appointments
+    });
+  }
+
+  // Debug: Log what filters are being applied
+  console.log('Applying filters:', {
+    startDate: startDateStr,
+    endDate: endDateStr,
+    startTime: startTimeStr,
+    endTime: endTimeStr,
+    city: cityStr,
+    specialty: specialtyStr,
+    experience: experienceStr,
+    fees: feesStr,
+    docName: docNameStr
+  });
+
+  // Debug: Test with a simple filter to see if filtering works at all
+  if (docNameStr) {
+    console.log('Testing simple name filter...');
+    const testFilter = appointments.filter(app => {
+      const doctorName = (app.doctor as any)?.user?.name;
+      return doctorName?.toLowerCase().includes(docNameStr.toLowerCase());
+    });
+    console.log('Simple name filter results:', testFilter.length);
+  }
 
   res.status(200).json({
     success: true,

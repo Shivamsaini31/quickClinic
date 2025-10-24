@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Container, Card, Row, Col, Button, Modal } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { motion } from 'framer-motion';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import { api } from '../../../../utils/api';
 import { format, isSameDay, parseISO } from 'date-fns';
-import { FaCalendarAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import GlassCard from '../../../common/GlassCard';
+import NeonButton from '../../../common/NeonButton';
+import { Calendar, Clock, DollarSign, User, Mail, Phone, Stethoscope, Award } from 'lucide-react';
 
 interface Doctor {
   _id: string;
@@ -126,100 +127,149 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
   };
 
   return (
-    <Container className="doctor-list-page">
-      <Row className="justify-content-center">
-        <Col md={4} lg={3} className="mb-4">
-          <Card className="doctor-card bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <Card.Body className="p-6">
-              <Card.Title className="text-xl font-bold text-gray-800 mb-3">{doctor.user.name}</Card.Title>
-              <Card.Text className="mb-2">
-                <strong className="text-gray-600">Specialty:</strong> <span className="text-gray-800">{doctor.specialization}</span>
-              </Card.Text>
-              <Card.Text className="mb-2">
-                <strong className="text-gray-600">Fees:</strong> <span className="text-gray-800">₹{doctor.fees}</span>
-              </Card.Text>
-              <Card.Text className="mb-2">
-                <strong className="text-gray-600">Experience:</strong> <span className="text-gray-800">{doctor.experience} years</span>
-              </Card.Text>
-              <Card.Text className="mb-2">
-                <strong className="text-gray-600">Email:</strong> <span className="text-gray-800">{doctor.user.email}</span>
-              </Card.Text>
-              <Card.Text className="mb-4">
-                <strong className="text-gray-600">Phone:</strong> <span className="text-gray-800">{doctor.user.phoneNumber}</span>
-              </Card.Text>
-              <Button 
-                variant="primary" 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 transform hover:scale-105" 
-                onClick={handleBookClick}
+    <GlassCard hover className="p-6">
+      {/* Doctor Header */}
+      <div className="flex items-center mb-6">
+        <div className="w-16 h-16 bg-gradient-to-r from-neon-500 to-cyan-500 rounded-full flex items-center justify-center text-white mr-4">
+          <User className="w-8 h-8" />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-white mb-1">{doctor.user.name}</h3>
+          <p className="text-white/80 text-sm">{doctor.specialization}</p>
+        </div>
+      </div>
+
+      {/* Doctor Details */}
+      <div className="space-y-3 mb-6">
+        <div className="flex items-center">
+          <Stethoscope className="w-4 h-4 text-cyan-400 mr-3" />
+          <span className="text-white/90 text-sm">Specialty: <span className="text-white font-medium">{doctor.specialization}</span></span>
+        </div>
+        <div className="flex items-center">
+          <DollarSign className="w-4 h-4 text-green-400 mr-3" />
+          <span className="text-white/90 text-sm">Fees: <span className="text-white font-medium">₹{doctor.fees}</span></span>
+        </div>
+        <div className="flex items-center">
+          <Award className="w-4 h-4 text-yellow-400 mr-3" />
+          <span className="text-white/90 text-sm">Experience: <span className="text-white font-medium">{doctor.experience} years</span></span>
+        </div>
+        <div className="flex items-center">
+          <Mail className="w-4 h-4 text-blue-400 mr-3" />
+          <span className="text-white/90 text-sm truncate">{doctor.user.email}</span>
+        </div>
+        <div className="flex items-center">
+          <Phone className="w-4 h-4 text-purple-400 mr-3" />
+          <span className="text-white/90 text-sm">{doctor.user.phoneNumber}</span>
+        </div>
+      </div>
+
+      <NeonButton
+        onClick={handleBookClick}
+        size="md"
+        className="w-full justify-center"
+      >
+        <Calendar className="w-4 h-4" />
+        Select Date
+      </NeonButton>
+
+      {showCalendar && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mt-6 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10"
+        >
+          <div className="flex items-center mb-4">
+            <Clock className="w-5 h-5 text-cyan-400 mr-2" />
+            <h6 className="text-lg font-semibold text-white">Select Date & Time</h6>
+          </div>
+          
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            dateFormat="yyyy/MM/dd"
+            className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300"
+            filterDate={filterDates}
+            placeholderText="Select a date"
+          />
+          
+          {availableTimes.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mt-4"
+            >
+              <label className="block text-sm font-medium text-white/90 mb-2">Select Time:</label>
+              <select 
+                className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition duration-300" 
+                value={selectedTime} 
+                onChange={handleTimeChange}
               >
-                <FaCalendarAlt className="mr-2" /> Select Date
-              </Button>
-
-              {showCalendar && (
-                <div className="calendar-container mt-4 p-4 bg-gray-50 rounded-lg">
-                  <DatePicker
-                    selected={selectedDate}
-                    onChange={handleDateChange}
-                    dateFormat="yyyy/MM/dd"
-                    className="form-control w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    filterDate={filterDates}
-                    placeholderText="Select a date"
-                  />
-                  {availableTimes.length > 0 && (
-                    <div className="mt-3">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Time:</label>
-                      <select 
-                        className="form-control w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                        value={selectedTime} 
-                        onChange={handleTimeChange}
-                      >
-                        <option value="">Select a time</option>
-                        {availableTimes.map((time, index) => (
-                          <option key={index} value={time}>
-                            {time}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                  <Button
-                    variant="primary"
-                    onClick={handleBookAppointment}
-                    disabled={!selectedDate || !selectedTime}
-                    className="mt-3 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
-                  >
-                    Book Appointment
-                  </Button>
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
+                <option value="" className="bg-gray-800">Select a time</option>
+                {availableTimes.map((time, index) => (
+                  <option key={index} value={time} className="bg-gray-800">
+                    {time}
+                  </option>
+                ))}
+              </select>
+            </motion.div>
+          )}
+          
+          <NeonButton
+            onClick={handleBookAppointment}
+            disabled={!selectedDate || !selectedTime}
+            size="md"
+            className="w-full mt-4 justify-center"
+          >
+            <Calendar className="w-4 h-4" />
+            Book Appointment
+          </NeonButton>
+        </motion.div>
+      )}
       {/* Payment Modal */}
-      <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Select Payment Mode</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="text-center">
-          <Button 
-            variant="success" 
-            onClick={() => handlePaymentChoice('online')} 
-            className="me-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
+      {showPaymentModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => setShowPaymentModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
           >
-            Pay Online
-          </Button>
-          <Button 
-            variant="secondary" 
-            onClick={() => handlePaymentChoice('offline')}
-            className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
-          >
-            Pay Offline
-          </Button>
-        </Modal.Body>
-      </Modal>
-    </Container>
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-white mb-6">Select Payment Mode</h3>
+              <div className="space-y-4">
+                <NeonButton
+                  onClick={() => handlePaymentChoice('online')}
+                  size="lg"
+                  className="w-full justify-center"
+                >
+                  <DollarSign className="w-5 h-5" />
+                  Pay Online
+                </NeonButton>
+                <NeonButton
+                  onClick={() => handlePaymentChoice('offline')}
+                  variant="outline"
+                  size="lg"
+                  className="w-full justify-center"
+                >
+                  <Clock className="w-5 h-5" />
+                  Pay Offline
+                </NeonButton>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </GlassCard>
   );
 };
 

@@ -1,32 +1,108 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Edit, Phone, Email, LocationOn, CalendarToday } from '@mui/icons-material';
+import { Edit, Phone, Email, LocationOn, CalendarToday, Refresh } from '@mui/icons-material';
 
 const UserInfoPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const loadUserData = () => {
-      try {
-        setLoading(true);
-        const authState = localStorage.getItem('authState');
-        const authData = authState ? JSON.parse(authState) : null;
-        
-        if (authData?.user) {
-          setUserData(authData.user);
+  const fetchUserData = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // First, try to get user data from localStorage as fallback
+      const authState = localStorage.getItem('authState');
+      const authData = authState ? JSON.parse(authState) : null;
+      
+      if (authData?.user) {
+        setUserData(authData.user);
+      }
+
+      // Then fetch the latest user data from the API
+      if (id) {
+        try {
+          const response = await fetch(`/api/v1/users/${id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            
+            if (data.success && data.user) {
+              setUserData(data.user);
+              
+              // Update localStorage with the latest data
+              const updatedAuthData = {
+                ...authData,
+                user: data.user
+              };
+              localStorage.setItem('authState', JSON.stringify(updatedAuthData));
+            }
+          } else {
+            console.error('Failed to fetch user data:', response.statusText);
+          }
+        } catch (apiError) {
+          console.error('Error fetching user data from API:', apiError);
+          // Keep the localStorage data if API fails
         }
-      } catch (error) {
-        console.error('Error loading user data:', error);
-      } finally {
-        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [id, fetchUserData]);
+
+  // Add event listener for page focus to refresh data when user comes back
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchUserData();
+    };
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'authState' && e.newValue) {
+        try {
+          const newAuthData = JSON.parse(e.newValue);
+          if (newAuthData?.user) {
+            setUserData(newAuthData.user);
+          }
+        } catch (error) {
+          console.error('Error parsing updated auth data:', error);
+        }
       }
     };
 
-    loadUserData();
-  }, [id]);
+    const handleUserDataUpdate = (e: CustomEvent) => {
+      if (e.detail?.user) {
+        setUserData(e.detail.user);
+      }
+    };
+
+    // Listen for page focus events
+    window.addEventListener('focus', handleFocus);
+    
+    // Listen for localStorage changes (when user updates info in another tab)
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom user data update events
+    window.addEventListener('userDataUpdated', handleUserDataUpdate as EventListener);
+
+    // Cleanup event listeners
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userDataUpdated', handleUserDataUpdate as EventListener);
+    };
+  }, [id, fetchUserData]);
 
   if (loading) {
     return (
@@ -93,10 +169,23 @@ const UserInfoPage: React.FC = () => {
         >
           {/* Header */}
           <div className={`bg-gradient-to-r ${getRoleColor(userData.role)} text-white p-8`}>
-            <div className="text-center">
+            <div className="text-center relative">
+              <motion.button
+                onClick={fetchUserData}
+                disabled={loading}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="absolute top-0 right-0 p-2 bg-white/20 hover:bg-white/30 rounded-full transition duration-300 disabled:opacity-50"
+                title="Refresh user data"
+              >
+                <Refresh className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+              </motion.button>
               <div className="text-6xl mb-4">{getRoleIcon(userData.role)}</div>
               <h1 className="text-3xl font-bold mb-2">{userData.name}</h1>
               <p className="text-lg opacity-90 capitalize">{userData.role}</p>
+              {loading && (
+                <p className="text-sm opacity-75 mt-2">Updating information...</p>
+              )}
             </div>
           </div>
 

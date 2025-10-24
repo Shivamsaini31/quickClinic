@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "main": "backend/dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node backend/dist/server.js",
-    "dev": "nodemon backend/dist/server.js",
-    "build": "npm install --legacy-peer-deps && npm install --prefix frontend --legacy-peer-deps && npm run build --prefix frontend && npm run build:backend",
-    "build:backend": "cd backend && tsc --noEmitOnError false",
-    "dev:backend": "cd backend && tsc && nodemon dist/server.js",
-    "vercel-build": "npm run build:backend && cd frontend && npm install --legacy-peer-deps && npm run build"
-  },
+  "start": "node backend/dist/server.js",
+  "dev": "concurrently -k -n TSC,NODE \"npm:watch:ts\" \"npm:serve\"",
+  "watch:ts": "cd backend && tsc -w --preserveWatchOutput",
+  "serve": "nodemon --verbose --watch backend/dist --ext js,json --exec node backend/dist/server.js",
+
+  "watch:node": "nodemon --watch backend/dist --ext js,json --exec \"node backend/dist/server.js\"",
+  "build": "npm install --legacy-peer-deps && npm install --prefix frontend --legacy-peer-deps && npm run build --prefix frontend && npm run build:backend",
+  "build:backend": "cd backend && tsc --noEmitOnError false",
+  "dev:backend": "cd backend && tsc -w --preserveWatchOutput",
+  "vercel-build": "npm run build:backend && cd frontend && npm install --legacy-peer-deps && npm run build"
+}
+,
   "author": "",
   "license": "ISC",
   "description": "",
@@ -33,7 +37,6 @@
     "moment": "^2.30.1",
     "mongoose": "^8.5.3",
     "nodemailer": "^6.9.14",
-    "nodemon": "^3.1.4",
     "razorpay": "^2.9.4",
     "react-bootstrap": "^2.10.4",
     "react-bootstrap-icons": "^1.11.4",
@@ -42,7 +45,6 @@
     "react-razorpay": "^3.0.1",
     "react-toastify": "^10.0.5",
     "socket.io": "^4.7.5",
-    "typescript": "^5.0.0",
     "uuid": "^10.0.0",
     "validator": "^13.12.0",
     "vercel": "^37.4.2"
@@ -56,10 +58,13 @@
     "@types/express-session": "^1.18.2",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.19.23",
     "@types/nodemailer": "^6.4.19",
     "@types/uuid": "^9.0.8",
     "@types/validator": "^13.15.3",
-    "ts-node": "^10.9.0"
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }

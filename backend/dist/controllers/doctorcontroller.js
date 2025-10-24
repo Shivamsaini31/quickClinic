@@ -325,7 +325,7 @@ exports.getpatients = (0, catchAsyncErrors_1.default)(async (req, res) => {
             patient: {
                 name: appointment.patient.user.name,
                 email: appointment.patient.user.email,
-                phone: appointment.patient.user.phone,
+                phone: appointment.patient.user.phoneNumber,
                 medicalHistory: appointment.patient.medicalHistory,
                 allergies: appointment.patient.allergies,
                 currentMedications: appointment.patient.currentMedications,
@@ -346,7 +346,7 @@ exports.getpatients = (0, catchAsyncErrors_1.default)(async (req, res) => {
             patient: {
                 name: patient.user.name,
                 email: patient.user.email,
-                phone: patient.user.phone,
+                phone: patient.user.phoneNumber,
                 medicalHistory: patient.medicalHistory,
                 allergies: patient.allergies,
                 currentMedications: patient.currentMedications,
@@ -367,7 +367,7 @@ exports.getpatients = (0, catchAsyncErrors_1.default)(async (req, res) => {
             patient: {
                 name: patient.user.name,
                 email: patient.user.email,
-                phone: patient.user.phone,
+                phone: patient.user.phoneNumber,
                 medicalHistory: patient.medicalHistory,
                 allergies: patient.allergies,
                 currentMedications: patient.currentMedications,
@@ -386,7 +386,7 @@ exports.getpatients = (0, catchAsyncErrors_1.default)(async (req, res) => {
         const patientDetails = patients.map(patient => ({
             name: patient.user.name,
             email: patient.user.email,
-            phone: patient.user.phone,
+            phone: patient.user.phoneNumber,
             medicalHistory: patient.medicalHistory,
             allergies: patient.allergies,
             currentMedications: patient.currentMedications,

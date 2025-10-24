@@ -62,6 +62,24 @@ const DoctorUpdatePage: React.FC = () => {
     try {
       const response = await axios.post(api.getUrl(`${id}/doctor/update_doctor`), formData);
       if (response.data.success) {
+        // Update localStorage with the new doctor data
+        const authState = localStorage.getItem('authState');
+        const authData = authState ? JSON.parse(authState) : null;
+        
+        if (authData && response.data.doctor) {
+          const updatedUser = { ...authData.user, ...response.data.doctor };
+          const updatedAuthData = {
+            ...authData,
+            user: updatedUser
+          };
+          localStorage.setItem('authState', JSON.stringify(updatedAuthData));
+          
+          // Dispatch custom event to notify other components
+          window.dispatchEvent(new CustomEvent('userDataUpdated', { 
+            detail: { user: updatedUser } 
+          }));
+        }
+        
         alert('Doctor information updated successfully!');
         setFormData({ specialization: '', experience: '', fees: '' });
       }

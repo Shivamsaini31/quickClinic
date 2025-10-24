@@ -2,15 +2,11 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import NotificationsDropdown from "../../notifications/notifications";
-import { Avatar, IconButton, Tooltip } from "@mui/material";
+import { Avatar } from "@mui/material";
 import PatientSidebar from "../sidebar/PatientSidebar";
+import NeonButton from "../../common/NeonButton";
+import { Stethoscope, Calendar, History, X, Menu, LogOut, User } from "lucide-react";
 
-import HistoryIcon from '@mui/icons-material/History';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import EventBusyIcon from '@mui/icons-material/EventBusy';
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
-import LogoutIcon from '@mui/icons-material/Logout';
 
 const PatientHeader = () => {
   const [showProfileCard, setShowProfileCard] = useState(false);
@@ -30,110 +26,155 @@ const PatientHeader = () => {
 
   const handleLogout = () => {
     // Clear authentication data
-    localStorage.removeItem('authState');
-    // Redirect to login page
+   
+    localStorage.clear();
+    
+    sessionStorage.clear();
+
+    window.location.reload(); 
     navigate('/login');
   };
 
   return (
     <>
       <PatientSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-      <header className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xl">
-        <div className="container mx-auto p-4 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-[100] bg-white/10 backdrop-blur-md border-b border-white/20 shadow-2xl">
+              <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           {/* Sidebar Toggle Button - Visible on all screen sizes */}
-          <button
+          <motion.button
             onClick={toggleSidebar}
             className="p-3 rounded-lg hover:bg-white/20 transition duration-300 flex items-center gap-2 bg-white/10 border border-white/20"
             title={isSidebarOpen ? "Close Menu" : "Open Menu"}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {isSidebarOpen ? <CloseIcon fontSize="large" /> : <MenuIcon fontSize="large" />}
-            <span className="hidden sm:inline text-sm font-medium">Menu</span>
-          </button>
+            <motion.div
+              animate={{ rotate: isSidebarOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {isSidebarOpen ? <X className="w-6 h-6 text-white" /> : <Menu className="w-6 h-6 text-white" />}
+            </motion.div>
+            <span className="hidden sm:inline text-sm font-medium text-white">Menu</span>
+          </motion.button>
 
           {/* Logo Section */}
-          <Link className="text-3xl font-bold tracking-wider hover:text-yellow-300 transition duration-300" to="/user/home">
-            <span className="mr-2">🏥</span>
-            QuickClinic
-          </Link>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Link className="text-3xl font-bold font-neon tracking-wider text-white hover:text-cyan-400 transition duration-300 flex items-center group" to="/user/home">
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.6 }}
+                className="mr-3"
+              >
+                <Stethoscope className="w-8 h-8 text-neon-400" />
+              </motion.div>
+              <span className="bg-gradient-to-r from-neon-400 to-cyan-400 bg-clip-text text-transparent">
+                QuickClinic
+              </span>
+            </Link>
+          </motion.div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex space-x-6">
-          <Tooltip title="Book Appointment">
-            <IconButton
-              className="text-white hover:text-yellow-300 transition duration-300"
-              onClick={() => navigate(`/patient/dashboard/${id}/appointment`)}
-            >
-              <CalendarTodayIcon fontSize="large" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Appointment History">
-            <Link className="text-white hover:text-yellow-300" to={`/patient/dashboard/${id}/history`}>
-              <IconButton>
-                <HistoryIcon fontSize="large" />
-              </IconButton>
-            </Link>
-          </Tooltip>
-          <Tooltip title="Cancel/Postpone">
-            <Link className="text-white hover:text-yellow-300" to={`/patient/dashboard/${id}/cancel/postpond`}>
-              <IconButton>
-                <EventBusyIcon fontSize="large" />
-              </IconButton>
-            </Link>
-          </Tooltip>
-          <Tooltip title="Logout">
-            <IconButton
-              className="text-white hover:text-red-300 transition duration-300"
-              onClick={handleLogout}
-            >
-              <LogoutIcon fontSize="large" />
-            </IconButton>
-          </Tooltip>
-        </nav>
+        <motion.nav 
+          className="hidden lg:flex space-x-4"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <NeonButton 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate(`/patient/dashboard/${id}/appointment`)}
+            className="flex items-center gap-2"
+          >
+            <Calendar className="w-4 h-4" />
+            Book Appointment
+          </NeonButton>
+          
+          <NeonButton 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate(`/patient/dashboard/${id}/history`)}
+            className="flex items-center gap-2"
+          >
+            <History className="w-4 h-4" />
+            History
+          </NeonButton>
+          
+          <NeonButton 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate(`/patient/dashboard/${id}/cancel/postpond`)}
+            className="flex items-center gap-2"
+          >
+            <X className="w-4 h-4" />
+            Cancel
+          </NeonButton>
+        </motion.nav>
 
         {/* User Profile Section */}
-        <div className="relative">
-          <IconButton onClick={handleProfileIconClick}>
+        <motion.div 
+          className="relative"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <motion.button
+            onClick={handleProfileIconClick}
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Avatar
-              className="hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-110"
+              className="hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-110 border-2 border-neon-400"
             />
-          </IconButton>
-          <span className="ml-2 text-lg font-semibold">{fetchdata?.user?.name}</span>
+            <span className="text-lg font-semibold text-white">{fetchdata?.user?.name}</span>
+          </motion.button>
 
           {/* Profile Card */}
           {showProfileCard && (
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.3 }}
+              className="absolute right-0 mt-2 w-64 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl"
             >
-              <div className="absolute right-0 mt-2 w-56 bg-white text-gray-900 shadow-xl rounded-lg p-4">
-                <h6 className="font-bold">Name: {fetchdata?.user?.name}</h6>
-                <h6>Email: {fetchdata?.user?.email}</h6>
-                <h6>Phone: {fetchdata?.user?.phoneNumber}</h6>
-                <div className="mt-3 space-y-2">
+              <div className="text-white">
+                <h6 className="font-bold text-lg mb-2">Name: {fetchdata?.user?.name}</h6>
+                <h6 className="text-white/80 mb-1">Email: {fetchdata?.user?.email}</h6>
+                <h6 className="text-white/80 mb-4">Phone: {fetchdata?.user?.phoneNumber}</h6>
+                <div className="space-y-3">
                   <Link
-                    className="block text-center bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-lg shadow-md transition duration-300"
+                    className="block"
                     to={`/user/${id}/update`}
                   >
-                    Update Info
+                    <NeonButton variant="outline" size="sm" className="w-full justify-center">
+                      <User className="w-4 h-4" />
+                      Update Info
+                    </NeonButton>
                   </Link>
-                  <button
+                  <NeonButton 
+                    variant="secondary" 
+                    size="sm" 
                     onClick={handleLogout}
-                    className="w-full text-center bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg shadow-md transition duration-300 flex items-center justify-center gap-2"
+                    className="w-full justify-center"
                   >
-                    <LogoutIcon fontSize="small" />
+                    <LogOut className="w-4 h-4" />
                     Logout
-                  </button>
+                  </NeonButton>
                 </div>
               </div>
             </motion.div>
           )}
-        </div>
+        </motion.div>
       </div>
 
         {/* Notifications Section */}
-        <div className="bg-gray-800 p-2">
+        <div className="bg-white/5 backdrop-blur-sm border-t border-white/10 p-2">
           <NotificationsDropdown />
         </div>
       </header>

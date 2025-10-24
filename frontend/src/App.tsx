@@ -20,7 +20,7 @@ function App() {
         <Router>
           <div className="App min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
             <Header />
-            <main className="pt-20">
+            <main className="pt-24">
               <Routes>
                 <Route path="/" element={<Navigate to="/user/home" />} />
                 <Route path='/user/*' element={<UserRoutes />} />
